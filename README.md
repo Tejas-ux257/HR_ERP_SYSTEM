@@ -229,3 +229,128 @@ User Authentication
 Role Based Access Control (RBAC)
 Reports
 Dashboard APIs
+
+
+# HR ERP System Backend
+
+A RESTful Backend API built using **Python Flask** and **MySQL** following a **Layered Architecture**.
+
+---
+
+## 🚀 Current Status
+
+✅ Department CRUD Module Completed
+
+- Create Department
+- Get All Departments
+- Get Department by ID
+- Update Department
+- Delete Department
+
+🚧 Employee Module (In Progress)
+
+---
+
+## 🛠️ Tech Stack
+
+- Python 3
+- Flask
+- Flask-CORS
+- MySQL
+- MySQL Connector
+- Python Dotenv
+
+---
+
+## 📂 Project Structure
+
+```text
+erp_sys/
+│
+├── app/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   ├── validators/
+│   └── utils/
+│
+├── .env
+├── requirements.txt
+└── run.py
+```
+
+---
+
+## 🗄️ Database
+
+Database Name
+
+```
+hr_erp_db
+```
+
+Tables
+
+- departments
+- employees
+
+---
+
+## 📌 Department APIs
+
+| Method | Endpoint |
+|---------|----------|
+| POST | `/departments` |
+| GET | `/departments` |
+| GET | `/departments/{id}` |
+| PUT | `/departments/{id}` |
+| DELETE | `/departments/{id}` |
+
+---
+
+## ▶️ Run Project
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the server
+
+```bash
+python run.py
+```
+
+Server URL
+
+```
+http://localhost:8080
+```
+
+---
+
+## 📖 Features
+
+- Layered Architecture
+- REST API
+- CRUD Operations
+- MySQL Database Integration
+- JSON Responses
+- Input Validation
+- Error Handling
+
+---
+
+## 🔄 Upcoming Features
+
+- Employee Management
+- Attendance Management
+- Leave Management
+- Payroll Management
+- Authentication
+- JWT Security
+- Role-Based Access Control (RBAC)
+
+---
