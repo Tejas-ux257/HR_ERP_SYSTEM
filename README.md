@@ -195,6 +195,7 @@ python run.py
 Server runs on
 
 http://localhost:8080
+
 Testing APIs
 Create Department
 curl -X POST http://localhost:8080/departments \
@@ -302,9 +303,9 @@ Tables
 | Method | Endpoint |
 |---------|----------|
 | POST | `/departments` |
-| GET | `/departments` |
-| GET | `/departments/{id}` |
-| PUT | `/departments/{id}` |
+| GET  | `/departments` |
+| GET  | `/departments/{id}` |
+| PUT  | `/departments/{id}` |
 | DELETE | `/departments/{id}` |
 
 ---

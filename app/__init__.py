@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from app.routes.department_routes import department_bp
+from app.routes.employee_routes import employee_bp
 from app.utils.error_handler import register_error_handlers
 
 
@@ -15,5 +16,9 @@ def create_app():
 
     # Register Error Handlers
     register_error_handlers(app)
+    
+    # register employee blueprint
+    app.register_blueprint(employee_bp)
+    
 
     return app
