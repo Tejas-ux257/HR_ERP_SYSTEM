@@ -9,5 +9,5 @@ if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=Config.APP_PORT,
-        debug=Config.FLASK_DEBUG
+        debug=Config.DEBUG
     )
