@@ -1,5 +1,7 @@
 from flask import request
 
+from app.middleware.auth_middleware import jwt_required
+
 from app.services.department_service import (
     create_department,
     get_all_departments,
@@ -16,6 +18,7 @@ from app.utils.response import (
 )
 
 
+@jwt_required
 def create_department_controller():
     """
     Create Department
@@ -45,6 +48,7 @@ def create_department_controller():
         return error_response(str(e), 409)
 
 
+@jwt_required
 def get_all_departments_controller():
     """
     Get All Departments
@@ -55,6 +59,7 @@ def get_all_departments_controller():
     return success_response(departments)
 
 
+@jwt_required
 def get_department_controller(department_id):
     """
     Get Department By ID
@@ -71,6 +76,7 @@ def get_department_controller(department_id):
     return success_response(department)
 
 
+@jwt_required
 def update_department_controller(department_id):
     """
     Update Department
@@ -100,6 +106,7 @@ def update_department_controller(department_id):
         return error_response(str(e), 409)
 
 
+@jwt_required
 def delete_department_controller(department_id):
     """
     Delete Department
