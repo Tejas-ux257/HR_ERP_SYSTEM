@@ -37,7 +37,7 @@ def jwt_required(func):
             # Verify JWT
             payload = verify_token(token)
 
-            # Store logged-in user for this request
+            # Store logged-in user
             g.current_user = payload
 
         except Exception as e:

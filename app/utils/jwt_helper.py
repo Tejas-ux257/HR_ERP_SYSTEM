@@ -1,3 +1,5 @@
+import uuid
+
 import jwt
 
 from datetime import datetime, timedelta
@@ -10,14 +12,17 @@ def generate_token(user):
     Generate JWT Token
     """
 
+    expires_at = datetime.utcnow() + timedelta(
+        minutes=Config.JWT_EXPIRE_MINUTES
+    )
+
     payload = {
         "user_id": user["id"],
         "employee_id": user["employee_id"],
         "username": user["username"],
         "role": user["role"],
-        "exp": datetime.utcnow() + timedelta(
-            minutes=Config.JWT_EXPIRE_MINUTES
-        )
+        "jti": str(uuid.uuid4()),
+        "exp": expires_at
     }
 
     token = jwt.encode(

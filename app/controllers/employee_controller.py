@@ -1,7 +1,7 @@
 from flask import request
 
 from app.middleware.auth_middleware import jwt_required
-
+from app.middleware.role_middleware import roles_required   
 from app.services.employee_service import (
     create_employee,
     get_all_employees,
@@ -19,6 +19,7 @@ from app.utils.response import (
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def create_employee_controller():
     """
     Create Employee
@@ -51,6 +52,7 @@ def create_employee_controller():
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def get_all_employees_controller():
     """
     Get All Employees
@@ -62,6 +64,7 @@ def get_all_employees_controller():
 
 
 @jwt_required
+@roles_required("Admin", "HR", "Employee")
 def get_employee_controller(employee_id):
     """
     Get Employee By ID
@@ -79,6 +82,7 @@ def get_employee_controller(employee_id):
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def update_employee_controller(employee_id):
     """
     Update Employee
@@ -117,6 +121,7 @@ def update_employee_controller(employee_id):
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def delete_employee_controller(employee_id):
     """
     Delete Employee

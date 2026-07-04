@@ -1,5 +1,5 @@
-import mysql.connector
 
+import mysql.connector
 from app.database import get_db_connection
 from app.models.user import User
 from app.utils.password import hash_password, verify_password
@@ -142,3 +142,5 @@ def login_user(username, password):
         "user": user.to_dict(),
         "token": token
     }
+
+

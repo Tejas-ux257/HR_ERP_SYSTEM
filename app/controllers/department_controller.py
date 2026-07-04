@@ -1,6 +1,7 @@
 from flask import request
 
 from app.middleware.auth_middleware import jwt_required
+from app.middleware.role_middleware import roles_required
 
 from app.services.department_service import (
     create_department,
@@ -19,6 +20,7 @@ from app.utils.response import (
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def create_department_controller():
     """
     Create Department
@@ -49,6 +51,7 @@ def create_department_controller():
 
 
 @jwt_required
+@roles_required("Admin", "HR", "Employee")
 def get_all_departments_controller():
     """
     Get All Departments
@@ -60,6 +63,7 @@ def get_all_departments_controller():
 
 
 @jwt_required
+@roles_required("Admin", "HR", "Employee")
 def get_department_controller(department_id):
     """
     Get Department By ID
@@ -77,6 +81,7 @@ def get_department_controller(department_id):
 
 
 @jwt_required
+@roles_required("Admin", "HR")
 def update_department_controller(department_id):
     """
     Update Department
@@ -107,6 +112,7 @@ def update_department_controller(department_id):
 
 
 @jwt_required
+@roles_required("Admin")
 def delete_department_controller(department_id):
     """
     Delete Department

@@ -1,13 +1,13 @@
 from flask import request
-
 from app.services.auth_service import (
     register_user,
-    login_user
+    login_user,
+   
 )
 
 from app.validators.auth_validator import (
     validate_register,
-    validate_login
+    validate_login,
 )
 
 from app.utils.response import (
@@ -73,3 +73,5 @@ def login_controller():
 
     except Exception as e:
         return error_response(str(e), 401)
+
+
