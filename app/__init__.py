@@ -8,6 +8,9 @@ from app.routes.attendance_routes import attendance_bp
 
 from app.utils.error_handler import register_error_handlers
 
+from app.routes.leave_routes import leave_bp
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,5 +24,6 @@ def create_app():
     app.register_blueprint(attendance_bp)
     # Register Error Handlers
     register_error_handlers(app)
+    app.register_blueprint(leave_bp)
 
     return app

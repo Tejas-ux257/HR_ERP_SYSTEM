@@ -1,4 +1,4 @@
 {
-  "message": "Authorization token is missing",
+  "message": "Route not found",
   "status": "error"
 }
