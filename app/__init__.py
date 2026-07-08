@@ -10,6 +10,7 @@ from app.utils.error_handler import register_error_handlers
 
 from app.routes.leave_routes import leave_bp
 from app.routes.payroll_routes import payroll_bp
+from app.routes.dashboard_routes import dashboard_bp
 
 
 
@@ -27,5 +28,6 @@ def create_app():
     register_error_handlers(app)
     app.register_blueprint(leave_bp)
     app.register_blueprint(payroll_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app
