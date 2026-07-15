@@ -1,4 +1,4 @@
-function DepartmentTable({ departments }) {
+function DepartmentTable({ departments, onEdit }) {
 
     return (
 
@@ -21,23 +21,18 @@ function DepartmentTable({ departments }) {
 
                 {departments.map((department) => (
 
-                   <tr key={department.department_id}>
-                        <td>{department.department_id}</td>
-
+                   <tr   key={department.department_id}>
+                         <td>{department.department_id}</td>
                         <td>{department.department_name}</td>
-
                         <td>{department.department_code}</td>
-
+                       
                         <td>
 
-                            <button className="btn btn-warning btn-sm me-2">
-                                Edit
+                           <button
+                                    className="btn btn-warning btn-sm me-2"
+                                     onClick={() => onEdit(department)}
+                                    > Edit
                             </button>
-
-                            <button className="btn btn-danger btn-sm">
-                                Delete
-                            </button>
-
                         </td>
 
                     </tr>
