@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import {
     addDepartment,
@@ -38,13 +39,13 @@ function DepartmentForm({
                     formData
                 );
 
-                alert("Department Updated Successfully");
+                toast.success("Department Updated Successfully");
 
             } else {
 
                 await addDepartment(formData);
 
-                alert("Department Added Successfully");
+                toast.success("Department Added Successfully");
 
             }
 
@@ -56,7 +57,7 @@ function DepartmentForm({
 
             console.error(error);
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 error.message ||
                 "Operation Failed"
