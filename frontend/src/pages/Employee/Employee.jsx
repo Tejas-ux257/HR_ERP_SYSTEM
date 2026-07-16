@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import EmployeeTable from "../../components/Employee/EmployeeTable";
 import EmployeeModal from "../../components/Employee/EmployeeModal";
+import ConfirmationModal from "../../components/Common/ConfirmationModal";
 
-import { getEmployees } from "../../services/employeeService";
+import {
+    getEmployees,
+    deleteEmployee,
+} from "../../services/employeeService";
 
 function Employee() {
 
@@ -13,14 +18,17 @@ function Employee() {
     const [showModal, setShowModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-    // Load Employees
-    const fetchEmployees = async () => {
+    // Delete Modal
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    // ==========================
+    // Fetch Employees
+    // ==========================
+    const fetchEmployees = useCallback(async () => {
 
         try {
 
             const response = await getEmployees();
-
-            console.log("Employee Response:", response);
 
             setEmployees(response.data || []);
 
@@ -28,56 +36,38 @@ function Employee() {
 
             console.error(error);
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 error.message ||
-                "Failed to load employees"
+                "Failed to load employees."
             );
-
-        } finally {
-
-            setLoading(false);
 
         }
 
-    };
+    }, []);
 
+    // ==========================
+    // Initial Load
+    // ==========================
     useEffect(() => {
 
-        let isMounted = true;
-
         const loadEmployees = async () => {
-            try {
-                const response = await getEmployees();
-                console.log("Employee Response:", response);
-                if (isMounted) {
-                    setEmployees(response.data || []);
-                }
-            } catch (error) {
-                if (isMounted) {
-                    console.error(error);
-                    alert(
-                        error.response?.data?.message ||
-                        error.message ||
-                        "Failed to load employees"
-                    );
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            }
+
+            setLoading(true);
+
+            await fetchEmployees();
+
+            setLoading(false);
+
         };
 
         loadEmployees();
 
-        return () => {
-            isMounted = false;
-        };
+    }, [fetchEmployees]);
 
-    }, []);
-
+    // ==========================
     // Add Employee
+    // ==========================
     const handleAddEmployee = () => {
 
         setSelectedEmployee(null);
@@ -86,7 +76,9 @@ function Employee() {
 
     };
 
+    // ==========================
     // Edit Employee
+    // ==========================
     const handleEditEmployee = (employee) => {
 
         setSelectedEmployee(employee);
@@ -95,7 +87,64 @@ function Employee() {
 
     };
 
-    // Close Modal
+    // ==========================
+    // Delete Button Click
+    // ==========================
+    const handleDeleteClick = (employee) => {
+
+        setSelectedEmployee(employee);
+
+        setShowDeleteModal(true);
+
+    };
+
+    // ==========================
+    // Confirm Delete
+    // ==========================
+    const handleConfirmDelete = async () => {
+
+        try {
+
+            await deleteEmployee(selectedEmployee.id);
+
+            toast.success("Employee deleted successfully.");
+
+            await fetchEmployees();
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                error.response?.data?.message ||
+                error.message ||
+                "Failed to delete employee."
+            );
+
+        } finally {
+
+            setShowDeleteModal(false);
+
+            setSelectedEmployee(null);
+
+        }
+
+    };
+
+    // ==========================
+    // Cancel Delete
+    // ==========================
+    const handleCancelDelete = () => {
+
+        setShowDeleteModal(false);
+
+        setSelectedEmployee(null);
+
+    };
+
+    // ==========================
+    // Close Add/Edit Modal
+    // ==========================
     const handleCloseModal = () => {
 
         setShowModal(false);
@@ -104,12 +153,19 @@ function Employee() {
 
     };
 
+    // ==========================
+    // Loading
+    // ==========================
     if (loading) {
 
         return (
+
             <div className="container-fluid mt-4">
+
                 <h4>Loading Employees...</h4>
+
             </div>
+
         );
 
     }
@@ -134,6 +190,7 @@ function Employee() {
             <EmployeeTable
                 employees={employees}
                 onEdit={handleEditEmployee}
+                onDelete={handleDeleteClick}
             />
 
             <EmployeeModal
@@ -141,6 +198,14 @@ function Employee() {
                 onClose={handleCloseModal}
                 employee={selectedEmployee}
                 refreshEmployees={fetchEmployees}
+            />
+
+            <ConfirmationModal
+                show={showDeleteModal}
+                title="Delete Employee"
+                message={`Are you sure you want to delete "${selectedEmployee?.name}"?`}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
             />
 
         </div>

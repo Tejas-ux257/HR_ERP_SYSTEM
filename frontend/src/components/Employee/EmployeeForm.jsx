@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
-import { addEmployee, updateEmployee } from "../../services/employeeService";
-import { getDepartments } from "../../services/departmentService";
+import {
+    addEmployee,
+    updateEmployee,
+} from "../../services/employeeService";
+
+import {
+    getDepartments,
+} from "../../services/departmentService";
 
 function EmployeeForm({
     employee,
@@ -11,44 +18,58 @@ function EmployeeForm({
 
     const [departments, setDepartments] = useState([]);
 
-    const [formData, setFormData] = useState(() => ({
+    const [formData, setFormData] = useState({
         name: employee?.name || "",
         email: employee?.email || "",
         phone: employee?.phone || "",
         department_id: employee?.department_id || "",
-    }));
+    });
 
+    // ==========================
+    // Load Departments
+    // ==========================
     useEffect(() => {
-        // load departments once on mount
+
         const loadDepartments = async () => {
 
             try {
 
                 const response = await getDepartments();
 
-                setDepartments(response.data);
+                setDepartments(response.data || []);
 
             } catch (error) {
 
                 console.error(error);
 
-                alert("Failed to load departments");
+                toast.error(
+                    error.response?.data?.message ||
+                    "Failed to load departments."
+                );
 
             }
 
         };
+
         loadDepartments();
+
     }, []);
 
+    // ==========================
+    // Handle Input Change
+    // ==========================
     const handleChange = (e) => {
 
-        setFormData({
-            ...formData,
+        setFormData((prev) => ({
+            ...prev,
             [e.target.name]: e.target.value,
-        });
+        }));
 
     };
 
+    // ==========================
+    // Submit Form
+    // ==========================
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -57,19 +78,26 @@ function EmployeeForm({
 
             if (employee) {
 
-                await updateEmployee(employee.id, formData);
+                await updateEmployee(
+                    employee.id,
+                    formData
+                );
 
-                alert("Employee Updated Successfully");
+                toast.success(
+                    "Employee updated successfully."
+                );
 
             } else {
 
                 await addEmployee(formData);
 
-                alert("Employee Added Successfully");
+                toast.success(
+                    "Employee added successfully."
+                );
 
             }
 
-            refreshEmployees();
+            await refreshEmployees();
 
             onClose();
 
@@ -77,9 +105,10 @@ function EmployeeForm({
 
             console.error(error);
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
-                "Operation Failed"
+                error.message ||
+                "Operation failed."
             );
 
         }

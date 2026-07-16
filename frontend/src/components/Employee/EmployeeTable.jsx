@@ -1,4 +1,22 @@
-function EmployeeTable({ employees }) {
+function EmployeeTable({
+    employees,
+    onEdit,
+    onDelete,
+}) {
+
+    if (employees.length === 0) {
+
+        return (
+
+            <div className="alert alert-info text-center">
+
+                No Employees Found
+
+            </div>
+
+        );
+
+    }
 
     return (
 
@@ -13,8 +31,8 @@ function EmployeeTable({ employees }) {
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Department</th>
-                    <th>Code</th>
-                    <th>Actions</th>
+                    <th>Department Code</th>
+                    <th width="170">Actions</th>
 
                 </tr>
 
@@ -22,51 +40,43 @@ function EmployeeTable({ employees }) {
 
             <tbody>
 
-                {employees.length === 0 ? (
+                {employees.map((employee) => (
 
-                    <tr>
+                    <tr key={employee.id}>
 
-                        <td colSpan="7" className="text-center">
-                            No Employees Found
+                        <td>{employee.id}</td>
+
+                        <td>{employee.name}</td>
+
+                        <td>{employee.email}</td>
+
+                        <td>{employee.phone}</td>
+
+                        <td>{employee.department_name}</td>
+
+                        <td>{employee.department_code}</td>
+
+                        <td>
+
+                            <button
+                                className="btn btn-warning btn-sm me-2"
+                                onClick={() => onEdit(employee)}
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => onDelete(employee)}
+                            >
+                                Delete
+                            </button>
+
                         </td>
 
                     </tr>
 
-                ) : (
-
-                    employees.map((employee) => (
-
-                        <tr key={employee.id}>
-
-                            <td>{employee.id}</td>
-
-                            <td>{employee.name}</td>
-
-                            <td>{employee.email}</td>
-
-                            <td>{employee.phone}</td>
-
-                            <td>{employee.department_name}</td>
-
-                            <td>{employee.department_code}</td>
-
-                            <td>
-
-                                <button className="btn btn-warning btn-sm me-2">
-                                    Edit
-                                </button>
-
-                                <button className="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    ))
-
-                )}
+                ))}
 
             </tbody>
 
