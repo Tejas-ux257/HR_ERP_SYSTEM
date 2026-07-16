@@ -1,4 +1,4 @@
-function DepartmentTable({ departments, onEdit }) {
+function DepartmentTable({ departments, onEdit , onDelete, }) {
 
     return (
 
@@ -27,12 +27,21 @@ function DepartmentTable({ departments, onEdit }) {
                         <td>{department.department_code}</td>
                        
                         <td>
-
                            <button
                                     className="btn btn-warning btn-sm me-2"
                                      onClick={() => onEdit(department)}
-                                    > Edit
+                            >     
+                                     Edit
                             </button>
+                            <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => {
+                                    console.log("Department Object:", department);
+                                    onDelete(department);
+    }}
+>
+    Delete
+</button>
                         </td>
 
                     </tr>

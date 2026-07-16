@@ -3,7 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import DepartmentTable from "../../components/Department/DepartmentTable";
 import DepartmentModal from "../../components/Department/DepartmentModal";
 
-import { getDepartments } from "../../services/departmentService";
+import {
+    getDepartments,
+    deleteDepartment,
+} from "../../services/departmentService";
 
 function Department() {
 
@@ -13,6 +16,7 @@ function Department() {
     const [showModal, setShowModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
+    // Fetch Departments
     const fetchDepartments = useCallback(async () => {
 
         try {
@@ -31,46 +35,28 @@ function Department() {
                 "Failed to load departments"
             );
 
-        } finally {
-
-            setLoading(false);
-
         }
 
     }, []);
 
+    // Initial Load
     useEffect(() => {
 
-        const loadInitialDepartments = async () => {
+        const loadDepartments = async () => {
 
-            try {
+            setLoading(true);
 
-                const response = await getDepartments();
+            await fetchDepartments();
 
-                setDepartments(response.data || []);
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert(
-                    error.response?.data?.message ||
-                    error.message ||
-                    "Failed to load departments"
-                );
-
-            } finally {
-
-                setLoading(false);
-
-            }
+            setLoading(false);
 
         };
 
-        loadInitialDepartments();
+        loadDepartments();
 
-    }, []);
+    }, [fetchDepartments]);
 
+    // Add Department
     const handleAddDepartment = () => {
 
         setSelectedDepartment(null);
@@ -79,6 +65,7 @@ function Department() {
 
     };
 
+    // Edit Department
     const handleEditDepartment = (department) => {
 
         setSelectedDepartment(department);
@@ -87,6 +74,7 @@ function Department() {
 
     };
 
+    // Close Modal
     const handleCloseModal = () => {
 
         setShowModal(false);
@@ -94,17 +82,55 @@ function Department() {
         setSelectedDepartment(null);
 
     };
+    // Delete Department
+    const handleDeleteDepartment = async (department) => {
 
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${department.department_name}"?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await deleteDepartment(department.department_id);
+
+            await fetchDepartments();
+
+            alert("Department deleted successfully.");
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.response?.data?.message ||
+                error.message ||
+                "Failed to delete department."
+            );
+
+        }
+
+    };
+
+    // Loading Screen
     if (loading) {
 
         return (
+
             <div className="container-fluid mt-4">
+
                 <h4>Loading Departments...</h4>
+
             </div>
+
         );
 
     }
 
+    // UI
     return (
 
         <div className="container-fluid">
@@ -125,6 +151,7 @@ function Department() {
             <DepartmentTable
                 departments={departments}
                 onEdit={handleEditDepartment}
+                onDelete={handleDeleteDepartment}
             />
 
             <DepartmentModal
