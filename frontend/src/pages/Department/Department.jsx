@@ -18,9 +18,11 @@ function Department() {
 
     const [searchTerm, setSearchTerm] = useState("");
 
-    // =============================
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 5;
+
     // Fetch Departments
-    // =============================
     const fetchDepartments = useCallback(async () => {
 
         try {
@@ -43,9 +45,8 @@ function Department() {
 
     }, []);
 
-    // =============================
+   
     // Initial Load
-    // =============================
     useEffect(() => {
 
         const loadDepartments = async () => {
@@ -62,9 +63,7 @@ function Department() {
 
     }, [fetchDepartments]);
 
-    // =============================
     // Search Filter
-    // =============================
     const filteredDepartments = departments.filter((department) => {
 
         return (
@@ -81,9 +80,20 @@ function Department() {
 
     });
 
-    // =============================
+   
+    // Pagination
+    const indexOfLastRecord = currentPage * recordsPerPage;
+
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+
+    const currentDepartments = filteredDepartments.slice(
+        indexOfFirstRecord,
+        indexOfLastRecord
+    );
+
+    const totalPages = Math.max(1, Math.ceil(filteredDepartments.length / recordsPerPage));
+
     // Add Department
-    // =============================
     const handleAddDepartment = () => {
 
         setSelectedDepartment(null);
@@ -92,9 +102,8 @@ function Department() {
 
     };
 
-    // =============================
+
     // Edit Department
-    // =============================
     const handleEditDepartment = (department) => {
 
         setSelectedDepartment(department);
@@ -103,9 +112,7 @@ function Department() {
 
     };
 
-    // =============================
     // Close Modal
-    // =============================
     const handleCloseModal = () => {
 
         setShowModal(false);
@@ -114,9 +121,7 @@ function Department() {
 
     };
 
-    // =============================
     // Delete Department
-    // =============================
     const handleDeleteDepartment = async (department) => {
 
         const confirmed = window.confirm(
@@ -147,9 +152,7 @@ function Department() {
 
     };
 
-    // =============================
-    // Loading Screen
-    // =============================
+    // Loading
     if (loading) {
 
         return (
@@ -164,9 +167,7 @@ function Department() {
 
     }
 
-    // =============================
     // UI
-    // =============================
     return (
 
         <div className="container-fluid">
@@ -184,7 +185,7 @@ function Department() {
 
             </div>
 
-            {/* Search Box */}
+            {/* Search */}
             <div className="row mb-3">
 
                 <div className="col-md-4">
@@ -194,19 +195,66 @@ function Department() {
                         className="form-control"
                         placeholder="Search Department..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+
+                            setSearchTerm(e.target.value);
+
+                            // Reset to first page while searching
+                            setCurrentPage(1);
+
+                        }}
                     />
 
                 </div>
 
             </div>
 
-            {/* Department Table */}
+            {/* Table */}
             <DepartmentTable
-                departments={filteredDepartments}
+                departments={currentDepartments}
                 onEdit={handleEditDepartment}
                 onDelete={handleDeleteDepartment}
             />
+               
+
+               <div className="d-flex justify-content-center mt-4">
+
+    <button
+        className="btn btn-outline-primary me-2"
+        disabled={currentPage === 1}
+        onClick={() => setCurrentPage(currentPage - 1)}
+    >
+        Previous
+    </button>
+
+    {Array.from(
+        { length: totalPages },
+        (_, index) => (
+
+            <button
+                key={index}
+                className={`btn me-2 ${
+                    currentPage === index + 1
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                }`}
+                onClick={() => setCurrentPage(index + 1)}
+            >
+                {index + 1}
+            </button>
+
+        )
+    )}
+
+    <button
+        className="btn btn-outline-primary"
+        disabled={currentPage === totalPages}
+        onClick={() => setCurrentPage(currentPage + 1)}
+    >
+        Next
+    </button>
+
+</div>
 
             {/* Add/Edit Modal */}
             <DepartmentModal
