@@ -118,9 +118,18 @@ def delete_department_controller(department_id):
     Delete Department
     """
 
-    result = delete_department(department_id)
+    try:
 
-    return success_response(
-        result,
-        "Department deleted successfully"
-    )
+        result = delete_department(department_id)
+
+        return success_response(
+            result,
+            "Department deleted successfully"
+        )
+
+    except Exception as e:
+
+        return error_response(
+            str(e),
+            409
+        )

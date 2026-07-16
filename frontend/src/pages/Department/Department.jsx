@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import DepartmentTable from "../../components/Department/DepartmentTable";
 import DepartmentModal from "../../components/Department/DepartmentModal";
+import { toast } from "react-toastify";
 
 import {
     getDepartments,
@@ -35,7 +36,7 @@ function Department() {
 
             console.error(error);
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 error.message ||
                 "Failed to load departments"
@@ -136,13 +137,13 @@ function Department() {
 
             await fetchDepartments();
 
-            alert("Department deleted successfully.");
+            toast.success("Department deleted successfully.");
 
         } catch (error) {
 
             console.error(error);
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 error.message ||
                 "Failed to delete department."
