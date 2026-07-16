@@ -17,6 +17,36 @@ function Employee() {
 
     const [showModal, setShowModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 5;
+
+    const filteredEmployees = employees.filter((employee) => {
+        const search = searchTerm.toLowerCase();
+
+        return (
+            employee.name.toLowerCase().includes(search) ||
+            employee.email.toLowerCase().includes(search) ||
+            employee.phone.includes(search) ||
+            employee.department_name.toLowerCase().includes(search) ||
+            employee.department_code.toLowerCase().includes(search)
+        );
+    });
+
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+
+    const currentEmployees = filteredEmployees.slice(
+        indexOfFirstRecord,
+        indexOfLastRecord
+    );
+
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredEmployees.length / recordsPerPage)
+    );
 
     // Delete Modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -186,13 +216,75 @@ function Employee() {
                 </button>
 
             </div>
+              
+            <div className="row mb-3">
+
+    <div className="col-md-4">
+
+        <input
+            type="text"
+            className="form-control"
+            placeholder="Search Employee..."
+            value={searchTerm}
+            onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage((prev) => prev + 1);
+                // setCurrentPage(1);
+            }}
+        />
+
+    </div>
+
+</div>
 
             <EmployeeTable
-                employees={employees}
+                employees={currentEmployees}
                 onEdit={handleEditEmployee}
                 onDelete={handleDeleteClick}
             />
 
+          <div className="d-flex justify-content-center mt-4">
+
+     <button
+        className="btn btn-outline-primary me-2"
+        disabled={currentPage === 1}
+        onClick={() => setCurrentPage(currentPage - 1)}
+    >
+        Previous
+    </button>
+
+    {Array.from(
+        { length: totalPages },
+        (_, index) => (
+
+            <button
+                key={index}
+                className={`btn me-2 ${
+                    currentPage === index + 1
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                }`}
+                onClick={() =>
+                    setCurrentPage(index + 1)
+                }
+            >
+                {index + 1}
+            </button>
+
+        )
+    )}
+
+    <button
+        className="btn btn-outline-primary"
+        disabled={currentPage === totalPages}
+        onClick={() =>
+            setCurrentPage(currentPage + 1)
+        }
+    >
+        Next
+    </button>
+
+</div>
             <EmployeeModal
                 show={showModal}
                 onClose={handleCloseModal}
