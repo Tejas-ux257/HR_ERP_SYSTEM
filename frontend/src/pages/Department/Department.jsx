@@ -16,7 +16,11 @@ function Department() {
     const [showModal, setShowModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
 
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // =============================
     // Fetch Departments
+    // =============================
     const fetchDepartments = useCallback(async () => {
 
         try {
@@ -39,7 +43,9 @@ function Department() {
 
     }, []);
 
+    // =============================
     // Initial Load
+    // =============================
     useEffect(() => {
 
         const loadDepartments = async () => {
@@ -56,7 +62,28 @@ function Department() {
 
     }, [fetchDepartments]);
 
+    // =============================
+    // Search Filter
+    // =============================
+    const filteredDepartments = departments.filter((department) => {
+
+        return (
+
+            department.department_name
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()) ||
+
+            department.department_code
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase())
+
+        );
+
+    });
+
+    // =============================
     // Add Department
+    // =============================
     const handleAddDepartment = () => {
 
         setSelectedDepartment(null);
@@ -65,7 +92,9 @@ function Department() {
 
     };
 
+    // =============================
     // Edit Department
+    // =============================
     const handleEditDepartment = (department) => {
 
         setSelectedDepartment(department);
@@ -74,7 +103,9 @@ function Department() {
 
     };
 
+    // =============================
     // Close Modal
+    // =============================
     const handleCloseModal = () => {
 
         setShowModal(false);
@@ -82,16 +113,17 @@ function Department() {
         setSelectedDepartment(null);
 
     };
+
+    // =============================
     // Delete Department
+    // =============================
     const handleDeleteDepartment = async (department) => {
 
         const confirmed = window.confirm(
             `Are you sure you want to delete "${department.department_name}"?`
         );
 
-        if (!confirmed) {
-            return;
-        }
+        if (!confirmed) return;
 
         try {
 
@@ -115,7 +147,9 @@ function Department() {
 
     };
 
+    // =============================
     // Loading Screen
+    // =============================
     if (loading) {
 
         return (
@@ -130,7 +164,9 @@ function Department() {
 
     }
 
+    // =============================
     // UI
+    // =============================
     return (
 
         <div className="container-fluid">
@@ -148,12 +184,31 @@ function Department() {
 
             </div>
 
+            {/* Search Box */}
+            <div className="row mb-3">
+
+                <div className="col-md-4">
+
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Department..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+
+                </div>
+
+            </div>
+
+            {/* Department Table */}
             <DepartmentTable
-                departments={departments}
+                departments={filteredDepartments}
                 onEdit={handleEditDepartment}
                 onDelete={handleDeleteDepartment}
             />
 
+            {/* Add/Edit Modal */}
             <DepartmentModal
                 show={showModal}
                 onClose={handleCloseModal}
