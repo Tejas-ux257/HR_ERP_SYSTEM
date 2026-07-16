@@ -25,6 +25,13 @@ function EmployeeForm({
         department_id: employee?.department_id || "",
     });
 
+    const [errors, setErrors] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        department_id: "",
+    });
+
     // ==========================
     // Load Departments
     // ==========================
@@ -67,12 +74,79 @@ function EmployeeForm({
 
     };
 
+    const validateForm = () => {
+
+    const newErrors = {
+        name: "",
+        email: "",
+        phone: "",
+        department_id: "",
+    };
+
+    // Name
+    if (!formData.name.trim()) {
+
+        newErrors.name = "Employee name is required.";
+
+    } else if (formData.name.trim().length < 3) {
+
+        newErrors.name =
+            "Employee name must be at least 3 characters.";
+
+    } else if (!/^[A-Za-z ]+$/.test(formData.name.trim())) {
+
+        newErrors.name =
+            "Employee name can contain only letters and spaces.";
+
+    }
+
+    // Email
+    if (!formData.email.trim()) {
+
+        newErrors.email = "Email is required.";
+
+    } else if (
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
+    ) {
+
+        newErrors.email = "Enter a valid email address.";
+
+    }
+
+    // Phone
+    if (!/^\d{10}$/.test(formData.phone.trim())) {
+
+        newErrors.phone =
+            "Phone number must contain exactly 10 digits.";
+
+    }
+
+    // Department
+    if (!formData.department_id) {
+
+        newErrors.department_id =
+            "Please select a department.";
+
+    }
+
+    setErrors(newErrors);
+
+    return Object.values(newErrors).every(
+        (error) => error === ""
+    );
+
+};
+
     // ==========================
     // Submit Form
     // ==========================
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
 
         try {
 
@@ -133,6 +207,7 @@ function EmployeeForm({
                     onChange={handleChange}
                     required
                 />
+                {errors.name && <div className="text-danger small mt-1">{errors.name}</div>}
 
             </div>
 
