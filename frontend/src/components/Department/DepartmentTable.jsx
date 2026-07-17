@@ -1,5 +1,19 @@
 function DepartmentTable({ departments, onEdit , onDelete, }) {
 
+    if (departments.length === 0) {
+
+        return (
+
+            <div className="alert alert-info text-center">
+
+                No Departments Found
+
+            </div>
+
+        );
+
+    }
+
     return (
 
         <table className="table table-bordered table-hover">

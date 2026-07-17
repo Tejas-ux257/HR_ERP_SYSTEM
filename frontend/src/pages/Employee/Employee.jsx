@@ -13,58 +13,45 @@ import {
 
 function Employee() {
 
+    const PAGE_SIZE = 5;
+    const BUFFER_SIZE = 10;
+
     const [employees, setEmployees] = useState([]);
+    const [nextEmployees, setNextEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [showModal, setShowModal] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Pagination State
-    const [currentPage, setCurrentPage] = useState(1);
-    const recordsPerPage = 5;
+    const [backendPage, setBackendPage] = useState(1);
+    const [bufferPage, setBufferPage] = useState(1);
+    const [hasNextBuffer, setHasNextBuffer] = useState(false);
 
-    const filteredEmployees = employees.filter((employee) => {
-        const search = searchTerm.toLowerCase();
-
-        return (
-            employee.name.toLowerCase().includes(search) ||
-            employee.email.toLowerCase().includes(search) ||
-            employee.phone.includes(search) ||
-            employee.department_name.toLowerCase().includes(search) ||
-            employee.department_code.toLowerCase().includes(search)
-        );
-    });
-
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-
-    const currentEmployees = filteredEmployees.slice(
-        indexOfFirstRecord,
-        indexOfLastRecord
-    );
-
-    const totalPages = Math.max(
-        1,
-        Math.ceil(filteredEmployees.length / recordsPerPage)
-    );
-
-    // Delete Modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // ==========================
-    // Fetch Employees
-    // ==========================
-    const fetchEmployees = useCallback(async () => {
+    const fetchEmployees = useCallback(async (page = 1, search = "") => {
 
         try {
+            const response = await getEmployees(page, BUFFER_SIZE, search);
+            const employeeList = response?.data?.employees || response?.data || [];
+            const hasNext = response?.data?.has_next ?? false;
 
-            const response = await getEmployees();
+            setEmployees(employeeList);
+            setBackendPage(page);
+            setBufferPage(1);
+            setHasNextBuffer(hasNext);
 
-            setEmployees(response.data || []);
+            const nextPageResponse = await getEmployees(
+                page + 1,
+                BUFFER_SIZE,
+                search
+            );
+            const prefetchedEmployees = nextPageResponse?.data?.employees || nextPageResponse?.data || [];
+
+            setNextEmployees(prefetchedEmployees);
 
         } catch (error) {
-
             console.error(error);
 
             toast.error(
@@ -72,78 +59,81 @@ function Employee() {
                 error.message ||
                 "Failed to load employees."
             );
-
         }
 
     }, []);
 
-    // ==========================
-    // Initial Load
-    // ==========================
     useEffect(() => {
 
         const loadEmployees = async () => {
-
             setLoading(true);
-
-            await fetchEmployees();
-
+            await fetchEmployees(1);
             setLoading(false);
-
         };
 
         loadEmployees();
 
     }, [fetchEmployees]);
 
-    // ==========================
-    // Add Employee
-    // ==========================
+    const currentEmployees =
+        bufferPage === 1
+            ? employees.slice(0, PAGE_SIZE)
+            : employees.slice(PAGE_SIZE, PAGE_SIZE * 2);
+
+    const handleNextPage = useCallback(async () => {
+        if (bufferPage === 1) {
+            setBufferPage(2);
+            return;
+        }
+
+        if (nextEmployees.length > 0) {
+            setEmployees(nextEmployees);
+            setBackendPage((prev) => prev + 1);
+            setBufferPage(1);
+            setNextEmployees([]);
+            return;
+        }
+
+        if (hasNextBuffer) {
+            await fetchEmployees(backendPage + 1);
+        }
+    }, [backendPage, bufferPage, fetchEmployees, hasNextBuffer, nextEmployees]);
+
+    const handlePreviousPage = useCallback(async () => {
+        if (bufferPage === 2) {
+            setBufferPage(1);
+            return;
+        }
+
+        if (backendPage > 1) {
+            await fetchEmployees(backendPage - 1);
+        }
+    }, [backendPage, bufferPage, fetchEmployees]);
+
     const handleAddEmployee = () => {
-
         setSelectedEmployee(null);
-
         setShowModal(true);
-
     };
 
-    // ==========================
-    // Edit Employee
-    // ==========================
     const handleEditEmployee = (employee) => {
-
         setSelectedEmployee(employee);
-
         setShowModal(true);
-
     };
 
-    // ==========================
-    // Delete Button Click
-    // ==========================
     const handleDeleteClick = (employee) => {
-
         setSelectedEmployee(employee);
-
         setShowDeleteModal(true);
-
     };
 
-    // ==========================
-    // Confirm Delete
-    // ==========================
     const handleConfirmDelete = async () => {
-
         try {
-
             await deleteEmployee(selectedEmployee.id);
 
             toast.success("Employee deleted successfully.");
 
-            await fetchEmployees();
+            await fetchEmployees(backendPage);
 
         } catch (error) {
-
             console.error(error);
 
             toast.error(
@@ -153,57 +143,32 @@ function Employee() {
             );
 
         } finally {
-
             setShowDeleteModal(false);
-
             setSelectedEmployee(null);
-
         }
-
     };
 
-    // ==========================
-    // Cancel Delete
-    // ==========================
     const handleCancelDelete = () => {
-
         setShowDeleteModal(false);
-
         setSelectedEmployee(null);
-
     };
 
-    // ==========================
-    // Close Add/Edit Modal
-    // ==========================
     const handleCloseModal = () => {
-
         setShowModal(false);
-
         setSelectedEmployee(null);
-
     };
 
-    // ==========================
-    // Loading
-    // ==========================
     if (loading) {
+        return (
+            <LoadingSpinner
+                message="Loading Employees..."
+            />
+        );
+    }
 
     return (
-        <LoadingSpinner
-            message="Loading Employees..."
-            
-        />
-    );
-
-}
-
-    return (
-
         <div className="container-fluid">
-
             <div className="d-flex justify-content-between align-items-center mb-4">
-
                 <h2>Employee Management</h2>
 
                 <button
@@ -212,28 +177,27 @@ function Employee() {
                 >
                     + Add Employee
                 </button>
-
             </div>
-              
+
             <div className="row mb-3">
+                <div className="col-md-4">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search Employee..."
+                        value={searchTerm}
+                        onChange={async (e) => {
 
-    <div className="col-md-4">
+                            const value = e.target.value;
 
-        <input
-            type="text"
-            className="form-control"
-            placeholder="Search Employee..."
-            value={searchTerm}
-            onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage((prev) => prev + 1);
-                // setCurrentPage(1);
-            }}
-        />
+                            setSearchTerm(value);
 
-    </div>
+                            await fetchEmployees(1, value);
 
-</div>
+                        }}
+                    />
+                </div>
+            </div>
 
             <EmployeeTable
                 employees={currentEmployees}
@@ -241,48 +205,24 @@ function Employee() {
                 onDelete={handleDeleteClick}
             />
 
-          <div className="d-flex justify-content-center mt-4">
+            <div className="d-flex justify-content-center mt-4">
+                <button
+                    className="btn btn-outline-primary me-2"
+                    disabled={backendPage === 1 && bufferPage === 1}
+                    onClick={handlePreviousPage}
+                >
+                    Previous
+                </button>
 
-     <button
-        className="btn btn-outline-primary me-2"
-        disabled={currentPage === 1}
-        onClick={() => setCurrentPage(currentPage - 1)}
-    >
-        Previous
-    </button>
+                <button
+                    className="btn btn-outline-primary"
+                    disabled={bufferPage === 2 ? !hasNextBuffer && nextEmployees.length === 0 : employees.length <= PAGE_SIZE && !hasNextBuffer}
+                    onClick={handleNextPage}
+                >
+                    Next
+                </button>
+            </div>
 
-    {Array.from(
-        { length: totalPages },
-        (_, index) => (
-
-            <button
-                key={index}
-                className={`btn me-2 ${
-                    currentPage === index + 1
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                }`}
-                onClick={() =>
-                    setCurrentPage(index + 1)
-                }
-            >
-                {index + 1}
-            </button>
-
-        )
-    )}
-
-    <button
-        className="btn btn-outline-primary"
-        disabled={currentPage === totalPages}
-        onClick={() =>
-            setCurrentPage(currentPage + 1)
-        }
-    >
-        Next
-    </button>
-
-</div>
             <EmployeeModal
                 show={showModal}
                 onClose={handleCloseModal}
@@ -297,11 +237,8 @@ function Employee() {
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
             />
-
         </div>
-
     );
-
 }
 
 export default Employee;

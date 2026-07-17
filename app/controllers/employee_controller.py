@@ -58,7 +58,11 @@ def get_all_employees_controller():
     Get All Employees
     """
 
-    employees = get_all_employees()
+    page = request.args.get("page", default=1, type=int)
+    limit = request.args.get("limit", default=10, type=int)
+    search = request.args.get("search", "")
+
+    employees = get_all_employees(page, limit, search)
 
     return success_response(employees)
 

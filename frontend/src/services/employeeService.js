@@ -1,7 +1,18 @@
 import api from "../api/axios";
 
-export const getEmployees = async () => {
-    const response = await api.get("/employees");
+export const getEmployees = async (
+    page = 1,
+    limit = 10,
+    search = ""
+) => {
+    const response = await api.get("/employees", {
+        params: {
+            page,
+            limit,
+            search,
+        },
+    });
+
     return response.data;
 };
 

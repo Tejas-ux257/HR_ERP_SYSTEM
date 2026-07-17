@@ -58,38 +58,101 @@ def create_employee(department_id, name, phone, email):
         conn.close()
 
 
-def get_all_employees():
+def get_all_employees(page=1, limit=10, search=""):
     """
-    Get All Employees
+    Get All Employees with pagination
     """
+
+    if page < 1:
+        page = 1
+
+    if limit < 1:
+        limit = 10
+
+    offset = (page - 1) * limit
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT
-            e.id,
-            e.department_id,
-            e.name,
-            e.phone,
-            e.email,
-            d.department_name,
-            d.department_code
-        FROM employees e
-        INNER JOIN departments d
-            ON e.department_id = d.department_id
-        ORDER BY e.id
-    """)
+    search_pattern = f"%{search}%"
 
-    rows = cursor.fetchall()
+    try:
+        query = """
+            SELECT
+                e.id,
+                e.department_id,
+                e.name,
+                e.phone,
+                e.email,
+                d.department_name,
+                d.department_code
+            FROM employees e
+            INNER JOIN departments d
+                ON e.department_id = d.department_id
+        """
 
-    cursor.close()
-    conn.close()
+        params = []
 
-    return [
-        Employee.from_db_row(row).to_dict()
-        for row in rows
-    ]
+        if search:
+            query += """
+                WHERE
+                    e.name LIKE %s
+                    OR e.email LIKE %s
+                    OR e.phone LIKE %s
+                    OR d.department_name LIKE %s
+                    OR d.department_code LIKE %s
+            """
+            params.extend([search_pattern] * 5)
+
+        query += """
+            ORDER BY e.id
+            LIMIT %s OFFSET %s
+        """
+        params.extend([limit, offset])
+
+        cursor.execute(query, tuple(params))
+
+        rows = cursor.fetchall()
+
+        count_query = """
+            SELECT COUNT(*) AS total_count
+            FROM employees e
+            INNER JOIN departments d
+                ON e.department_id = d.department_id
+        """
+
+        count_params = []
+
+        if search:
+            count_query += """
+                WHERE
+                    e.name LIKE %s
+                    OR e.email LIKE %s
+                    OR e.phone LIKE %s
+                    OR d.department_name LIKE %s
+                    OR d.department_code LIKE %s
+            """
+            count_params.extend([search_pattern] * 5)
+
+        cursor.execute(count_query, tuple(count_params))
+
+        count_row = cursor.fetchone()
+        total_count = count_row["total_count"] if count_row else 0
+
+        has_next = (offset + len(rows)) < total_count
+
+        return {
+            "employees": [
+                Employee.from_db_row(row).to_dict()
+                for row in rows
+            ],
+            "total_count": total_count,
+            "has_next": has_next
+        }
+
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def get_employee_by_id(employee_id):
