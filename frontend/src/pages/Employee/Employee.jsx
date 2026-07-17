@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import EmployeeTable from "../../components/Employee/EmployeeTable";
 import EmployeeModal from "../../components/Employee/EmployeeModal";
 import ConfirmationModal from "../../components/Common/ConfirmationModal";
+import LoadingSpinner from "../../components/Common/LoadingSpinner";
 
 import {
     getEmployees,
@@ -188,17 +189,14 @@ function Employee() {
     // ==========================
     if (loading) {
 
-        return (
+    return (
+        <LoadingSpinner
+            message="Loading Employees..."
+            
+        />
+    );
 
-            <div className="container-fluid mt-4">
-
-                <h4>Loading Employees...</h4>
-
-            </div>
-
-        );
-
-    }
+}
 
     return (
 

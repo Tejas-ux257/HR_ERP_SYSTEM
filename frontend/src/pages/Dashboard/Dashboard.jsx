@@ -1,50 +1,43 @@
 import { useEffect, useState } from "react";
 import { getDashboardSummary } from "../../services/dashboardService";
+import LoadingSpinner from "../../components/Common/LoadingSpinner";
 
 function Dashboard() {
 
     const [dashboard, setDashboard] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-
     const fetchDashboard = async () => {
-
-        console.log("1. Started");
-
         try {
-
             console.log("2. Calling API");
-
             const response = await getDashboardSummary();
-
             console.log("3. API Response:", response);
-
             setDashboard(response.data);
-
         } catch (error) {
-
             console.log("4. Error:", error);
-
         } finally {
-
             console.log("5. Finally");
-
             setLoading(false);
-
         }
-
     };
 
-    fetchDashboard();
-
-}, []);
+    useEffect(() => {
+        const loadDashboard = async () => {
+            setLoading(true);
+            try {
+                await fetchDashboard();
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadDashboard();
+    }, []);
 
     if (loading) {
-        return <h3>Loading Dashboard...</h3>;
+        return <LoadingSpinner />;
     }
 
-   return (
+    return (
     <div className="container-fluid">
 
         <h2 className="mb-4">Dashboard</h2>

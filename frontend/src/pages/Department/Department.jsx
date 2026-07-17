@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import DepartmentTable from "../../components/Department/DepartmentTable";
 import DepartmentModal from "../../components/Department/DepartmentModal";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../components/Common/LoadingSpinner";
 
 import {
     getDepartments,
@@ -154,19 +155,15 @@ function Department() {
     };
 
     // Loading
-    if (loading) {
+   if (loading) {
 
-        return (
+    return (
+        <LoadingSpinner
+            message="Loading Departments..."
+        />
+    );
 
-            <div className="container-fluid mt-4">
-
-                <h4>Loading Departments...</h4>
-
-            </div>
-
-        );
-
-    }
+}
 
     // UI
     return (
