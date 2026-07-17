@@ -6,12 +6,12 @@ function Navbar() {
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    const logout = () => {
+    const handleLogout = () => {
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
-        navigate("/");
+        navigate("/", { replace: true });
     };
 
     return (
@@ -34,7 +34,7 @@ function Navbar() {
 
                 <button
                     className="btn btn-danger btn-sm"
-                    onClick={logout}
+                    onClick={handleLogout}
                 >
                     Logout
                 </button>

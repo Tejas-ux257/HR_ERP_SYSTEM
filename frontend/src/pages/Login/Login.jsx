@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import api from "../../api/axios";
 
 import { loginUser } from "../../services/authService";
 
@@ -9,6 +11,22 @@ function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    useEffect(() => {
+        const verifyUser = async () => {
+            try {
+                await api.get("/auth/verify");
+                navigate("/dashboard", { replace: true });
+            } catch {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+            }
+        };
+
+        if (localStorage.getItem("token")) {
+            verifyUser();
+        }
+    }, [navigate]);
 
     const handleLogin = async (e) => {
 
