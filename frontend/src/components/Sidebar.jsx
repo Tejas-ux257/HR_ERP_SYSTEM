@@ -1,47 +1,59 @@
+import { NavLink } from "react-router-dom";
+
 function Sidebar() {
+    const linkStyle = ({ isActive }) => ({
+        color: "#fff",
+        textDecoration: "none",
+        padding: "10px 15px",
+        display: "block",
+        borderRadius: "5px",
+        marginBottom: "5px",
+        backgroundColor: isActive ? "#0d6efd" : "transparent",
+    });
+
     return (
         <div
             className="bg-dark text-white p-3"
             style={{ width: "250px", minHeight: "100vh" }}
         >
-            <h4 className="mb-4">Menu</h4>
+            <h4 className="mb-4">HR ERP System</h4>
 
             <ul className="nav flex-column">
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/dashboard" style={linkStyle}>
                         Dashboard
-                    </a>
+                    </NavLink>
                 </li>
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/departments" style={linkStyle}>
                         Departments
-                    </a>
+                    </NavLink>
                 </li>
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/employees" style={linkStyle}>
                         Employees
-                    </a>
+                    </NavLink>
                 </li>
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/attendance" style={linkStyle}>
                         Attendance
-                    </a>
+                    </NavLink>
                 </li>
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/leave" style={linkStyle}>
                         Leave
-                    </a>
+                    </NavLink>
                 </li>
 
                 <li className="nav-item">
-                    <a href="#" className="nav-link text-white">
+                    <NavLink to="/payroll" style={linkStyle}>
                         Payroll
-                    </a>
+                    </NavLink>
                 </li>
 
             </ul>

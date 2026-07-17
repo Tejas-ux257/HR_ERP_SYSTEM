@@ -4,6 +4,7 @@ import DepartmentTable from "../../components/Department/DepartmentTable";
 import DepartmentModal from "../../components/Department/DepartmentModal";
 import { toast } from "react-toastify";
 import LoadingSpinner from "../../components/Common/LoadingSpinner";
+import ConfirmationModal from "../../components/Common/ConfirmationModal";
 
 import {
     getDepartments,
@@ -17,6 +18,7 @@ function Department() {
 
     const [showModal, setShowModal] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -124,17 +126,19 @@ function Department() {
     };
 
     // Delete Department
-    const handleDeleteDepartment = async (department) => {
+    const handleDeleteDepartment = (department) => {
 
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${department.department_name}"?`
-        );
+        setSelectedDepartment(department);
 
-        if (!confirmed) return;
+        setShowDeleteModal(true);
+
+    };
+
+    const handleConfirmDelete = async () => {
 
         try {
 
-            await deleteDepartment(department.department_id);
+            await deleteDepartment(selectedDepartment.department_id);
 
             await fetchDepartments();
 
@@ -150,7 +154,21 @@ function Department() {
                 "Failed to delete department."
             );
 
+        } finally {
+
+            setShowDeleteModal(false);
+
+            setSelectedDepartment(null);
+
         }
+
+    };
+
+    const handleCancelDelete = () => {
+
+        setShowDeleteModal(false);
+
+        setSelectedDepartment(null);
 
     };
 
@@ -260,6 +278,14 @@ function Department() {
                 onClose={handleCloseModal}
                 department={selectedDepartment}
                 refreshDepartments={fetchDepartments}
+            />
+
+            <ConfirmationModal
+                show={showDeleteModal}
+                title="Delete Department"
+                message={`Are you sure you want to delete "${selectedDepartment?.department_name}"?`}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
             />
 
         </div>
