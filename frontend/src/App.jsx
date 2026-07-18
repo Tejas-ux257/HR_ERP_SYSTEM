@@ -43,6 +43,19 @@ function App() {
                             </DashboardLayout>
                         </ProtectedRoute>
                     }
+                />    
+
+
+
+                <Route
+                    path="/attendance"
+                    element={
+                        <ProtectedRoute>
+                            <DashboardLayout>
+                                <Attendance />
+                            </DashboardLayout>
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route
