@@ -128,20 +128,28 @@ def get_all_leaves():
 
         cursor.execute(
             """
-            SELECT *
-            FROM leaves
-            ORDER BY applied_at DESC
+            SELECT
+                l.id,
+                l.employee_id,
+                e.name AS employee_name,
+                e.email,
+                d.department_name,
+                l.leave_type,
+                l.start_date,
+                l.end_date,
+                l.reason,
+                l.status,
+                l.applied_at
+            FROM leaves l
+            INNER JOIN employees e
+                ON l.employee_id = e.id
+            INNER JOIN departments d
+                ON e.department_id = d.department_id
+            ORDER BY l.applied_at DESC
             """
         )
 
-        rows = cursor.fetchall()
-
-        leaves = [
-            Leave.from_db_row(row).to_dict()
-            for row in rows
-        ]
-
-        return leaves
+        return cursor.fetchall()
 
     finally:
         cursor.close()
