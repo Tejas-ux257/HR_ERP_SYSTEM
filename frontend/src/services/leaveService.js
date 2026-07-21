@@ -7,7 +7,7 @@ export const applyLeave = async (leaveData) => {
 };
 
 // Get All Leaves
-export const getAllLeaves = async () => {
+export const getLeaves = async () => {
     const response = await api.get("/leave");
     return response.data;
 };
@@ -18,13 +18,20 @@ export const getEmployeeLeaves = async (employeeId) => {
     return response.data;
 };
 
-// Approve Leave
+// Update Leave Status
+export const updateLeaveStatus = async (leaveId, status) => {
+    const response = await api.put(
+        `/leave/${leaveId}/${status.toLowerCase()}`
+    );
+    return response.data;
+};
+
+// Optional Individual APIs
 export const approveLeave = async (leaveId) => {
     const response = await api.put(`/leave/${leaveId}/approve`);
     return response.data;
 };
 
-// Reject Leave
 export const rejectLeave = async (leaveId) => {
     const response = await api.put(`/leave/${leaveId}/reject`);
     return response.data;
