@@ -1,8 +1,4 @@
-const PayrollTable = ({
-    payrolls,
-    onAdd,
-    onEdit
-}) => {
+const EmployeePayrollTable = ({ payrolls }) => {
 
     const formatCurrency = (amount) => {
         return `₹${Number(amount).toLocaleString("en-IN")}`;
@@ -15,24 +11,14 @@ const PayrollTable = ({
     };
 
     return (
+
         <div className="container mt-4">
 
-            {/* Header */}
+            <div className="mb-4">
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
-
-                <h3>Payroll Management</h3>
-
-                <button
-                    className="btn btn-primary"
-                    onClick={onAdd}
-                >
-                    + Generate Payroll
-                </button>
+                <h3>My Payroll History</h3>
 
             </div>
-
-            {/* Table */}
 
             <div className="table-responsive">
 
@@ -42,8 +28,6 @@ const PayrollTable = ({
 
                         <tr>
 
-                            <th>ID</th>
-                            <th>Employee ID</th>
                             <th>Month</th>
                             <th>Year</th>
                             <th>Basic Salary</th>
@@ -51,7 +35,6 @@ const PayrollTable = ({
                             <th>Deductions</th>
                             <th>Net Salary</th>
                             <th>Generated On</th>
-                            <th>Action</th>
 
                         </tr>
 
@@ -65,7 +48,7 @@ const PayrollTable = ({
                                 <tr>
 
                                     <td
-                                        colSpan="10"
+                                        colSpan="7"
                                         className="text-center text-muted"
                                     >
                                         No Payroll Records Found
@@ -78,10 +61,6 @@ const PayrollTable = ({
                                 payrolls.map((payroll) => (
 
                                     <tr key={payroll.id}>
-
-                                        <td>{payroll.id}</td>
-
-                                        <td>{payroll.employee_id}</td>
 
                                         <td>{payroll.month}</td>
 
@@ -107,22 +86,12 @@ const PayrollTable = ({
                                             {formatDate(payroll.generated_at)}
                                         </td>
 
-                                        <td>
-
-                                            <button
-                                                className="btn btn-warning btn-sm"
-                                                onClick={() => onEdit(payroll)}
-                                            >
-                                                Edit
-                                            </button>
-
-                                        </td>
-
                                     </tr>
 
                                 ))
 
                             )
+
                         }
 
                     </tbody>
@@ -132,8 +101,9 @@ const PayrollTable = ({
             </div>
 
         </div>
+
     );
 
 };
 
-export default PayrollTable;
+export default EmployeePayrollTable;
