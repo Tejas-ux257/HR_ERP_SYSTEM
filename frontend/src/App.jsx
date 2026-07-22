@@ -15,12 +15,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import "react-toastify/dist/ReactToastify.css";
 
+import EmployeeDashboard from "../employee/pages/EmployeeDashboard";
+
 function App() {
   return (
     <>
       <Routes>
         {/* Public Route */}
         <Route path="/" element={<Login />} />
+        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
 
         {/* Protected Routes */}
         <Route
