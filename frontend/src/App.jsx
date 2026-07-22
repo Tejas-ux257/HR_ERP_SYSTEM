@@ -13,10 +13,12 @@ import Profile from "./pages/Profile/Profile";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Employee Portal
+// Employee Portal Pages
 import EmployeeDashboard from "./employee/pages/EmployeeDashboard";
 import MyProfile from "./employee/pages/MyProfile";
 import EmployeeAttendance from "./employee/pages/EmployeeAttendance";
+import EmployeeApplyLeave from "./employee/pages/EmployeeApplyLeave";
+import EmployeeMyLeave from "./employee/pages/EmployeeMyLeave";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -130,6 +132,24 @@ function App() {
           element={
             <ProtectedRoute>
               <EmployeeAttendance />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee/apply-leave"
+          element={
+            <ProtectedRoute>
+              <EmployeeApplyLeave />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee/my-leaves"
+          element={
+            <ProtectedRoute>
+              <EmployeeMyLeave />
             </ProtectedRoute>
           }
         />
