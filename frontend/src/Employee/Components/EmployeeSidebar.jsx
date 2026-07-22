@@ -59,9 +59,6 @@ export default function EmployeeSidebar() {
       {/* Logo / Title */}
       <div className="text-center mb-4">
         <h4 className="fw-bold text-white">Employee Portal</h4>
-        <small className="text-secondary">
-          HR ERP Management System
-        </small>
       </div>
 
       <hr className="text-secondary" />
