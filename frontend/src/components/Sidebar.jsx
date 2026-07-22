@@ -16,7 +16,7 @@ function Sidebar() {
             className="bg-dark text-white p-3"
             style={{ width: "250px", minHeight: "100vh" }}
         >
-            <h4 className="mb-4">Admin Profile </h4>
+            <h4 className="mb-4">Admin Profile</h4>
 
             <ul className="nav flex-column">
 
@@ -38,6 +38,13 @@ function Sidebar() {
                     </NavLink>
                 </li>
 
+                {/* New Profile Menu 
+                <li className="nav-item">
+                    <NavLink to="/profile" style={linkStyle}>
+                        Profile
+                    </NavLink>
+                </li> {/* New Profile Menu */}
+
                 <li className="nav-item">
                     <NavLink to="/attendance" style={linkStyle}>
                         Attendance
@@ -53,6 +60,14 @@ function Sidebar() {
                 <li className="nav-item">
                     <NavLink to="/payroll" style={linkStyle}>
                         Payroll
+                    </NavLink>
+                </li>
+
+
+                 {/* New Profile Menu */}
+                <li className="nav-item">
+                    <NavLink to="/profile" style={linkStyle}>
+                        Profile
                     </NavLink>
                 </li>
 

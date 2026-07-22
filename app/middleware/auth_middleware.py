@@ -1,5 +1,4 @@
 from functools import wraps
-
 from flask import request, g
 
 from app.utils.jwt_helper import verify_token
@@ -14,7 +13,6 @@ def jwt_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
 
-        # Get Authorization header
         auth_header = request.headers.get("Authorization")
 
         if not auth_header:
@@ -23,28 +21,20 @@ def jwt_required(func):
                 401
             )
 
-        # Check header format
         if not auth_header.startswith("Bearer "):
             return error_response(
                 "Invalid authorization header",
                 401
             )
 
-        # Extract JWT token
         token = auth_header.split(" ")[1]
 
         try:
-            # Verify JWT
             payload = verify_token(token)
-
-            # Store logged-in user
             g.current_user = payload
 
         except Exception as e:
-            return error_response(
-                str(e),
-                401
-            )
+            return error_response(str(e), 401)
 
         return func(*args, **kwargs)
 

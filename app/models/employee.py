@@ -11,6 +11,12 @@ class Employee:
         name,
         phone,
         email,
+        address=None,
+        gender=None,
+        dob=None,
+        profile_image=None,
+        created_at=None,
+        updated_at=None,
         department_name=None,
         department_code=None
     ):
@@ -19,6 +25,18 @@ class Employee:
         self.name = name
         self.phone = phone
         self.email = email
+
+        # Profile Information
+        self.address = address
+        self.gender = gender
+        self.dob = dob
+        self.profile_image = profile_image
+
+        # Audit Fields
+        self.created_at = created_at
+        self.updated_at = updated_at
+
+        # Department Information
         self.department_name = department_name
         self.department_code = department_code
 
@@ -32,10 +50,15 @@ class Employee:
             "department_id": self.department_id,
             "name": self.name,
             "phone": self.phone,
-            "email": self.email
+            "email": self.email,
+            "address": self.address,
+            "gender": self.gender,
+            "dob": self.dob,
+            "profile_image": self.profile_image,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
-        # Include department details if available
         if self.department_name is not None:
             data["department_name"] = self.department_name
 
@@ -56,6 +79,12 @@ class Employee:
             name=row["name"],
             phone=row["phone"],
             email=row["email"],
+            address=row.get("address"),
+            gender=row.get("gender"),
+            dob=row.get("dob"),
+            profile_image=row.get("profile_image"),
+            created_at=row.get("created_at"),
+            updated_at=row.get("updated_at"),
             department_name=row.get("department_name"),
-            department_code=row.get("department_code")
+            department_code=row.get("department_code"),
         )
