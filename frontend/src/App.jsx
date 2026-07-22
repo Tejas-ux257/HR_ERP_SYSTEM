@@ -13,19 +13,22 @@ import Profile from "./pages/Profile/Profile";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import "react-toastify/dist/ReactToastify.css";
+// Employee Portal
+import EmployeeDashboard from "./employee/pages/EmployeeDashboard";
+import MyProfile from "./employee/pages/MyProfile";
+import EmployeeAttendance from "./employee/pages/EmployeeAttendance";
 
-import EmployeeDashboard from "../employee/pages/EmployeeDashboard";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <>
       <Routes>
-        {/* Public Route */}
+        {/* Public Routes */}
         <Route path="/" element={<Login />} />
-        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+        <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes */}
+        {/* Admin Routes */}
         <Route
           path="/dashboard"
           element={
@@ -102,13 +105,39 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Employee Routes */}
+        <Route
+          path="/employee/dashboard"
+          element={
+            <ProtectedRoute>
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee/profile"
+          element={
+            <ProtectedRoute>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee/attendance"
+          element={
+            <ProtectedRoute>
+              <EmployeeAttendance />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
-      {/* Toast Container */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
-        hideProgressBar={false}
         newestOnTop
         closeOnClick
         pauseOnHover

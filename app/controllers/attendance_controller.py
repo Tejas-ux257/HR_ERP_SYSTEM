@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, g
 
 from app.middleware.auth_middleware import jwt_required
 from app.middleware.role_middleware import roles_required
@@ -9,7 +9,6 @@ from app.services.attendance_service import (
     get_all_attendance,
     get_employee_attendance,
     get_today_attendance
-    
 )
 
 from app.validators.attendance_validator import (
@@ -23,6 +22,9 @@ from app.utils.response import (
 )
 
 
+# ==========================================================
+# Check In
+# ==========================================================
 @jwt_required
 @roles_required("Admin", "HR", "Employee")
 def check_in_controller():
@@ -56,6 +58,9 @@ def check_in_controller():
         )
 
 
+# ==========================================================
+# Check Out
+# ==========================================================
 @jwt_required
 @roles_required("Admin", "HR", "Employee")
 def check_out_controller():
@@ -88,6 +93,9 @@ def check_out_controller():
         )
 
 
+# ==========================================================
+# Admin/HR - Get All Attendance
+# ==========================================================
 @jwt_required
 @roles_required("Admin", "HR")
 def get_all_attendance_controller():
@@ -106,32 +114,70 @@ def get_all_attendance_controller():
             str(e),
             400
         )
-        
+
+
+# ==========================================================
+# Admin/HR - Get Particular Employee Attendance
+# ==========================================================
 @jwt_required
-@roles_required("Admin", "HR", "Employee")
+@roles_required("Admin", "HR")
 def get_employee_attendance_controller(employee_id):
     """
-    Get Employee Attendance History
+    Get Attendance History of Particular Employee
     """
 
     try:
 
         attendance = get_employee_attendance(employee_id)
 
-        return success_response(attendance)
+        return success_response(
+            attendance,
+            "Attendance fetched successfully"
+        )
 
     except Exception as e:
         return error_response(
             str(e),
             400
-        )        
+        )
 
+
+# ==========================================================
+# Employee - My Attendance
+# ==========================================================
+@jwt_required
+@roles_required("Employee")
+def my_attendance_controller():
+    """
+    Logged-in Employee Attendance
+    """
+
+    try:
+
+        employee_id = g.current_user["employee_id"]
+
+        attendance = get_employee_attendance(employee_id)
+
+        return success_response(
+            attendance,
+            "Attendance fetched successfully"
+        )
+
+    except Exception as e:
+        return error_response(
+            str(e),
+            400
+        )
+
+
+# ==========================================================
+# Admin/HR - Today's Attendance
+# ==========================================================
 @jwt_required
 @roles_required("Admin", "HR")
-def get_today_attendance_controller():   
-    
+def get_today_attendance_controller():
     """
-    Get Today's Attendance Records
+    Get Today's Attendance
     """
 
     try:
@@ -144,5 +190,4 @@ def get_today_attendance_controller():
         return error_response(
             str(e),
             400
-        )     
-        
+        )

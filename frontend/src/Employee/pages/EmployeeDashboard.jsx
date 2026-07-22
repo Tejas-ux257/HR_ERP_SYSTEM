@@ -15,15 +15,14 @@ export default function EmployeeDashboard() {
   return (
     <EmployeeLayout>
       <div className="container-fluid px-0">
-        {/* Welcome Header */}
+        {/* Welcome Banner */}
         <div className="bg-white p-4 rounded-4 shadow-sm mb-4 border-0">
           <h3 className="fw-bold text-dark mb-1">Welcome back, {userName}! 👋</h3>
           <p className="text-muted mb-0">Here is an overview of your workspace and self-service metrics.</p>
         </div>
 
-        {/* Stats Grid */}
+        {/* Metrics Overview Cards */}
         <div className="row g-4 mb-4">
-          {/* Total Attendance */}
           <div className="col-md-3">
             <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
               <div className="d-flex align-items-center justify-content-between">
@@ -38,7 +37,6 @@ export default function EmployeeDashboard() {
             </div>
           </div>
 
-          {/* Pending Leaves */}
           <div className="col-md-3">
             <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
               <div className="d-flex align-items-center justify-content-between">
@@ -53,7 +51,6 @@ export default function EmployeeDashboard() {
             </div>
           </div>
 
-          {/* Approved Leaves */}
           <div className="col-md-3">
             <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
               <div className="d-flex align-items-center justify-content-between">
@@ -68,7 +65,6 @@ export default function EmployeeDashboard() {
             </div>
           </div>
 
-          {/* Current Salary */}
           <div className="col-md-3">
             <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
               <div className="d-flex align-items-center justify-content-between">
@@ -86,9 +82,9 @@ export default function EmployeeDashboard() {
 
         {/* Quick Info Box */}
         <div className="bg-white p-4 rounded-4 shadow-sm border-0">
-          <h5 className="fw-bold text-dark mb-3">Quick Navigation</h5>
-          <p className="text-muted">
-            Use the sidebar to view your detailed attendance records, submit new leave applications, track leave status, or view your payroll details.
+          <h5 className="fw-bold text-dark mb-2">Quick Navigation</h5>
+          <p className="text-muted mb-0">
+            Use the sidebar options to manage your personal profile, attendance history, leave applications, and payroll slips.
           </p>
         </div>
       </div>
