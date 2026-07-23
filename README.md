@@ -124,35 +124,33 @@ The **HR ERP System** provides a centralized **Enterprise HR ERP Platform** that
 
 The application adopts a **Decoupled Client-Server Architecture**. The React Single Page Application (SPA) renders UI state and executes asynchronous REST API requests using Axios. The Python Flask backend validates JWT bearer tokens via middleware before processing logic through service/controller layers and interacting with MySQL.
 
+## 🏗 System Architecture
+
+The HR ERP System follows a **three-tier client-server architecture**. The React frontend communicates with the Flask backend through secure REST APIs. JWT authentication protects endpoints, while the backend processes business logic and stores data in MySQL.
+
 ```mermaid
 graph TD
-    %% Client Layer
-    subgraph Client Tier [Frontend - React SPA]
-        A[User Browser Interface] -->|React Router| B[State & Hooks Context]
-        B -->|Axios REST Calls| C[JWT Authorization Token Header]
-    end
 
-    %% Network Gateway
-    C -->|HTTPS / JSON API Requests| D[Flask Gateway Router]
+A["User (Admin / HR / Employee)"] --> B["React Frontend"]
+B --> C["Axios API Client"]
+C --> D["Flask REST API"]
 
-    %% Server Layer
-    subgraph Server Tier [Backend - Python Flask]
-        D --> E{JWT Token Middleware}
-        E -->|Authenticated| F[Flask Blueprints Routes]
-        E -->|Unauthorized| G[401 / 403 Standard JSON Response]
-        
-        F --> H[Controllers Layer]
-        H --> I[Business Logic Services Layer]
-        I --> J[Data Access & PyMySQL Layer]
-    end
+D --> E{"JWT Authentication"}
 
-    %% Database Layer
-    subgraph Storage Tier [Relational Database]
-        J -->|SQL Queries & Connection Pool| K[(MySQL Database: hr_erp_db)]
-    end 
+E -->|Valid| F["Blueprint Routes"]
+E -->|Invalid| G["401 / 403 Response"]
 
+F --> H["Controllers"]
+H --> I["Services"]
+I --> J["Database Layer"]
+
+J --> K[("MySQL Database")]
+
+```
 
     🗂 Database Schema & SQL1. Entity-Relationship Diagram (ERD)Code snippeterDiagram
+
+   erDiagram
     USERS ||--o{ ATTENDANCE : "logs"
     USERS ||--o{ LEAVE_REQUESTS : "applies"
     USERS ||--o{ PAYROLL : "receives"
@@ -203,6 +201,8 @@ graph TD
         decimal net_salary
         datetime generated_at
     }
+
+
 2. Complete Database Setup Script (schema.sql)Execute this complete SQL initialization script in your MySQL environment:SQL-- Create Database
 CREATE DATABASE IF NOT EXISTS hr_erp_db;
 USE hr_erp_db;
