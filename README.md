@@ -122,10 +122,6 @@ The **HR ERP System** provides a centralized **Enterprise HR ERP Platform** that
 
 ## 🏗 System Architecture
 
-The application adopts a **Decoupled Client-Server Architecture**. The React Single Page Application (SPA) renders UI state and executes asynchronous REST API requests using Axios. The Python Flask backend validates JWT bearer tokens via middleware before processing logic through service/controller layers and interacting with MySQL.
-
-## 🏗 System Architecture
-
 The HR ERP System follows a **three-tier client-server architecture**. The React frontend communicates with the Flask backend through secure REST APIs. JWT authentication protects endpoints, while the backend processes business logic and stores data in MySQL.
 
 ```mermaid
