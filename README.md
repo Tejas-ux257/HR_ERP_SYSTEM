@@ -762,9 +762,9 @@ Open a Pull Request describing your changes.
 
 GitHub: https://github.com/Tejas-ux257
 
-LinkedIn: https://www.linkedin.com/in/YOUR-LINKEDIN
+LinkedIn: https://www.linkedin.com/in/tejas-kumar-d-aa0694343/
 
-Email: tejaskumard2004@gmail.com
+Email: tejasshetty2574@gmail.com
 
 ---
 
