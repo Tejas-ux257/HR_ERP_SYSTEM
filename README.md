@@ -27,7 +27,7 @@
   </p>
 
   <p align="center">
-    <a href="#-key-features">Key Features</a> •
+    <a href="#-key-features--role-matrix">Key Features</a> •
     <a href="#-system-architecture">Architecture</a> •
     <a href="#-database-schema--sql">Database Schema</a> •
     <a href="#-installation--setup">Quick Start</a> •
@@ -41,7 +41,7 @@
 ## 📌 Table of Contents
 
 - [Overview](#-overview)
-- [Industry Problem vs Solution](#-industry-problem-vs-proposed-solution)
+- [Industry Problem vs Proposed Solution](#-industry-problem-vs-proposed-solution)
 - [Who Can Use This?](#-who-can-use-this)
 - [Key Features & Role Matrix](#-key-features--role-matrix)
 - [System Architecture](#-system-architecture)
@@ -152,10 +152,7 @@ graph TD
     end 
 
 
-
-🗂 Database Schema & SQL
-1. Entity-Relationship Diagram (ERD)
-erDiagram
+    🗂 Database Schema & SQL1. Entity-Relationship Diagram (ERD)Code snippeterDiagram
     USERS ||--o{ ATTENDANCE : "logs"
     USERS ||--o{ LEAVE_REQUESTS : "applies"
     USERS ||--o{ PAYROLL : "receives"
@@ -206,10 +203,7 @@ erDiagram
         decimal net_salary
         datetime generated_at
     }
-
-2. Complete Database Setup Script (schema.sql)
-Execute this complete SQL initialization script in your MySQL environment
--- Create Database
+2. Complete Database Setup Script (schema.sql)Execute this complete SQL initialization script in your MySQL environment:SQL-- Create Database
 CREATE DATABASE IF NOT EXISTS hr_erp_db;
 USE hr_erp_db;
 
@@ -274,42 +268,7 @@ INSERT INTO departments (department_name, description) VALUES
 ('Engineering', 'Software development and technical operations'),
 ('Human Resources', 'Talent acquisition, employee welfare, and compliance'),
 ('Finance', 'Accounting, payroll, and financial planning');
-
-🧩 Technology Stack
-Frontend
-Core Framework: React.js (v18+)
-
-Routing: React Router DOM (v6+)
-
-HTTP Client: Axios
-
-UI Styling: Bootstrap 5
-
-Icons & Notifications: react-icons, react-toastify
-
-Backend
-Language & Runtime: Python 3.11+
-
-Framework: Flask (using Blueprints)
-
-Authentication: PyJWT
-
-Password Hashing: bcrypt
-
-CORS Management: flask-cors
-
-Database & Tools
-Database: MySQL 8.0
-
-Driver: PyMySQL / mysql-connector-python
-
-API Testing: Postman
-
-Version Control: Git & GitHub
-
-📂 Project Directory Structure
-
-HR_ERP_SYSTEM/
+🧩 Technology StackFrontendCore Framework: React.js (v18+)Routing: React Router DOM (v6+)HTTP Client: AxiosUI Styling: Bootstrap 5Icons & Notifications: react-icons, react-toastifyBackendLanguage & Runtime: Python 3.11+Framework: Flask (using Blueprints)Authentication: PyJWTPassword Hashing: bcryptCORS Management: flask-corsDatabase & ToolsDatabase: MySQL 8.0Driver: PyMySQL / mysql-connector-pythonAPI Testing: PostmanVersion Control: Git & GitHub📂 Project Directory StructurePlaintextHR_ERP_SYSTEM/
 │
 ├── app/                        # Backend Application Package
 │   ├── controllers/            # Request handlers parsing client inputs
@@ -342,30 +301,10 @@ HR_ERP_SYSTEM/
 ├── requirements.txt            # Python dependencies manifest
 ├── run.py                      # Backend server execution entry point
 └── README.md                   # System documentation
-
-
-
-
-⚙ Installation & Setup
-Prerequisites
-Ensure you have the following installed on your machine:
-
-Python (v3.11 or higher)
-
-Node.js (v18 or higher) & npm
-
-MySQL Server (v8.0 or higher)
-
-1. Clone Repository
-
-
-
-git clone [https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git](https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git)
+⚙ Installation & SetupPrerequisitesEnsure you have the following installed on your machine:Python (v3.11 or higher)Node.js (v18 or higher) & npmMySQL Server (v8.0 or higher)1. Clone RepositoryBashgit clone [https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git](https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git)
 cd HR_ERP_SYSTEM
-
-
-2. Database ConfigurationStart your MySQL server and execute the database script:Bashmysql -u root -p < schema.sql
-3. Backend Setup (Flask REST API)Navigate to root and create a virtual environment:Bashpython -m venv venv
+2. Database ConfigurationStart your MySQL server and execute the database setup script:Bashmysql -u root -p < schema.sql
+3. Backend Setup (Flask REST API)Navigate to the root directory and create a virtual environment:Bashpython -m venv venv
 Activate virtual environment:Windows:DOSvenv\Scripts\activate
 macOS / Linux:Bashsource venv/bin/activate
 Install required dependencies:Bashpip install -r requirements.txt
@@ -380,7 +319,7 @@ Backend running on http://127.0.0.1:50004. Frontend Setup (React SPA)Navigate to
 Install Node packages:Bashnpm install
 Configure frontend environment variables by creating .env inside frontend/:Code snippetREACT_APP_API_URL=[http://127.0.0.1:5000/api](http://127.0.0.1:5000/api)
 Start the frontend client:Bashnpm start
-Frontend running on http://localhost:3000🧪 API DocumentationAll request payloads and responses use standard JSON formatting with standard status codes (200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden).1. Authentication EndpointsPOST /api/auth/loginAuthenticates user credentials and returns a signed JWT Token.Request Body:JSON{
+Frontend running on http://localhost:3000🧪 API DocumentationAll request payloads and responses use standard JSON formatting with status codes (200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden).1. Authentication EndpointsPOST /api/auth/loginAuthenticates user credentials and returns a signed JWT Token.Request Body:JSON{
   "email": "admin@company.com",
   "password": "AdminPassword123"
 }
@@ -402,6 +341,3 @@ Frontend Deployment (Vercel / Netlify)Import your GitHub repository to Vercel/Ne
 Commit Your Changes:Bashgit commit -m "Add NewFeature"
 Push to the Branch:Bashgit push origin feature/NewFeature
 Open a Pull Request👨‍💻 AuthorTejas Kumar DComputer Science & Engineering Student | Full Stack & AI Developer🌐 GitHub: @Tejas-ux257💼 LinkedIn: Tejas Kumar D📧 Email: tejaskumard2004@gmail.com⭐ Found this repository useful? Give it a Star!Designed with ❤️ by Tejas Kumar D
-
-
-
