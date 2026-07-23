@@ -297,43 +297,479 @@ INSERT INTO departments (department_name, description) VALUES
 ├── requirements.txt            # Python dependencies manifest
 ├── run.py                      # Backend server execution entry point
 └── README.md                   # System documentation
-⚙ Installation & SetupPrerequisitesEnsure you have the following installed on your machine:Python (v3.11 or higher)Node.js (v18 or higher) & npmMySQL Server (v8.0 or higher)1. Clone RepositoryBashgit clone [https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git](https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git)
+
+
+# ⚙️ Installation & Setup
+
+Follow the steps below to set up the **HR ERP System** on your local machine.
+
+---
+
+## 📋 Prerequisites
+
+Before getting started, ensure the following software is installed:
+
+| Software | Version |
+|----------|---------|
+| Python | 3.11+ |
+| Node.js | 18+ |
+| npm | Latest |
+| MySQL Server | 8.0+ |
+| Git | Latest |
+
+---
+
+# 🚀 Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Tejas-ux257/HR_ERP_SYSTEM.git
+
 cd HR_ERP_SYSTEM
-2. Database ConfigurationStart your MySQL server and execute the database setup script:Bashmysql -u root -p < schema.sql
-3. Backend Setup (Flask REST API)Navigate to the root directory and create a virtual environment:Bashpython -m venv venv
-Activate virtual environment:Windows:DOSvenv\Scripts\activate
-macOS / Linux:Bashsource venv/bin/activate
-Install required dependencies:Bashpip install -r requirements.txt
-Create a .env file in the root directory:Code snippetDB_HOST=localhost
+```
+
+---
+
+# 🗄️ Step 2: Database Configuration
+
+Start your MySQL server.
+
+Create the database and import the SQL schema.
+
+```bash
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE hr_erp_db;
+```
+
+Import the database schema.
+
+```bash
+mysql -u root -p hr_erp_db < schema.sql
+```
+
+---
+
+# 🐍 Step 3: Backend Setup (Flask)
+
+## Create Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+---
+
+## Activate Virtual Environment
+
+### Windows
+
+```bash
+venv\Scripts\activate
+```
+
+### macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Configure Environment Variables
+
+Create a file named `.env` in the project root.
+
+```env
+DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=hr_erp_db
-JWT_SECRET_KEY=super_secret_jwt_key_for_hr_erp
+
+JWT_SECRET_KEY=your_secret_key
+
 PORT=5000
-Run the Flask backend server:Bashpython run.py
-Backend running on http://127.0.0.1:50004. Frontend Setup (React SPA)Navigate to the frontend folder:Bashcd frontend
-Install Node packages:Bashnpm install
-Configure frontend environment variables by creating .env inside frontend/:Code snippetREACT_APP_API_URL=[http://127.0.0.1:5000/api](http://127.0.0.1:5000/api)
-Start the frontend client:Bashnpm start
-Frontend running on http://localhost:3000🧪 API DocumentationAll request payloads and responses use standard JSON formatting with status codes (200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden).1. Authentication EndpointsPOST /api/auth/loginAuthenticates user credentials and returns a signed JWT Token.Request Body:JSON{
-  "email": "admin@company.com",
-  "password": "AdminPassword123"
+```
+
+---
+
+## Run the Flask Server
+
+```bash
+python run.py
+```
+
+Backend will be available at:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+# ⚛️ Step 4: Frontend Setup (React)
+
+Navigate to the frontend folder.
+
+```bash
+cd frontend
+```
+
+---
+
+## Install Node Packages
+
+```bash
+npm install
+```
+
+---
+
+## Configure Frontend Environment
+
+Create a `.env` file inside the **frontend** folder.
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:5000
+```
+
+> **Note:**  
+> If your project uses **Create React App**, replace it with:
+
+```env
+REACT_APP_API_URL=http://127.0.0.1:5000
+```
+
+---
+
+## Start the Frontend
+
+For **Vite**
+
+```bash
+npm run dev
+```
+
+For **Create React App**
+
+```bash
+npm start
+```
+
+Frontend will be available at:
+
+```
+http://localhost:5173
+```
+
+or
+
+```
+http://localhost:3000
+```
+
+depending on your frontend configuration.
+
+---
+
+# ✅ Application URLs
+
+| Service | URL |
+|----------|-----|
+| Frontend | http://localhost:5173 |
+| Backend API | http://127.0.0.1:5000 |
+| Database | MySQL (Localhost) |
+
+---
+
+# 📦 Project Setup Complete
+
+After completing the above steps:
+
+- ✅ Backend Server Running
+- ✅ Frontend Running
+- ✅ Database Connected
+- ✅ JWT Authentication Ready
+- ✅ HR ERP System Ready to Use
+
+
+🧪 API Documentation
+
+# 🧪 API Documentation
+
+The backend exposes RESTful APIs that communicate using **JSON**.
+
+---
+
+## 🔐 Authentication APIs
+
+| Method | Endpoint | Description | Access |
+|---------|----------|-------------|--------|
+| POST | `/login` | Login user | Public |
+| POST | `/register` | Register user | Admin |
+
+### Login Request
+
+```json
+{
+  "username": "admin",
+  "password": "Admin@123"
 }
-Response (200 OK):JSON{
+```
+
+### Successful Response
+
+```json
+{
   "status": "success",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "JWT_TOKEN",
   "user": {
-    "id": 1,
-    "full_name": "Tejas Kumar D",
-    "email": "admin@company.com",
-    "role": "Admin",
-    "department_id": 1
+    "employee_id": 1,
+    "username": "admin",
+    "role": "Admin"
   }
 }
-2. Department EndpointsMethodEndpointAccess LevelDescriptionGET/api/departmentsAuthenticatedFetch list of all active departmentsPOST/api/departmentsAdminCreate a new organizational departmentPUT/api/departments/:idAdminUpdate department name and descriptionDELETE/api/departments/:idAdminDelete an existing department3. Employee EndpointsMethodEndpointAccess LevelDescriptionGET/api/employeesAdmin / HRFetch directory of all registered employeesPOST/api/employeesAdmin / HRRegister a new user profilePUT/api/employees/:idAdmin / HRUpdate employee department or detailsDELETE/api/employees/:idAdminDelete an employee account4. Attendance EndpointsMethodEndpointAccess LevelDescriptionPOST/api/attendance/check-inAuthenticatedRecord current timestamp for entryPOST/api/attendance/check-outAuthenticatedRecord current timestamp for departureGET/api/attendance/historyAuthenticatedRetrieve personal or system-wide logs5. Leave Management EndpointsMethodEndpointAccess LevelDescriptionPOST/api/leave/applyAuthenticatedSubmit a new leave requestGET/api/leave/requestsAdmin / HRRetrieve all pending leave applicationsPUT/api/leave/status/:idAdmin / HRUpdate leave status (Approved / Rejected)6. Payroll EndpointsMethodEndpointAccess LevelDescriptionPOST/api/payroll/generateAdmin / HRProcess dynamic salary calculation for a userGET/api/payroll/history/:user_idAuthenticatedView generated payslips🔐 Security ImplementationCryptographic Hashing: User passwords are encrypted with bcrypt (salting + hashing) prior to database insertion. Raw passwords are never stored.Stateless Authorization: Secure endpoints enforce JWT authorization via custom decorators. Tokens must be passed in the HTTP request header:PlaintextAuthorization: Bearer <your_jwt_token>
-Role-Based Access Control (RBAC): Backend endpoints verify role claims within the JWT payload before executing database operations.Input Sanitization: Parameterized SQL queries prevent standard SQL injection risks.🚀 Deployment GuideBackend Deployment (Render / AWS EC2)Ensure gunicorn is included in your requirements.txt:Plaintextgunicorn==21.2.0
-Configure environment variables (DB_HOST, DB_USER, DB_PASSWORD, JWT_SECRET_KEY) inside your hosting provider settings panel.Set start command:Bashgunicorn run:app
-Frontend Deployment (Vercel / Netlify)Import your GitHub repository to Vercel/Netlify.Set Build Commands:Build Command: npm run buildOutput Directory: buildSet Environment Variable:REACT_APP_API_URL pointing to your deployed backend URL.📈 Future Roadmap[ ] Automated Email Alerts: SMTP email delivery upon leave approvals or payslip generation.[ ] AI-Powered Attendance Insights: Predictive absence analysis and automated workforce shift scheduling.[ ] Biometric & QR Check-In: Hardware API integrations for physical barcode scanning and facial recognition entry.[ ] PDF Exporting: One-click downloadable PDF payslips and CSV performance reports.[ ] Dockerization: Containerize frontend, backend, and MySQL using docker-compose.❓ Troubleshooting & FAQ🤝 ContributingContributions are welcome! Follow these steps to contribute:Fork the RepositoryCreate a Feature Branch:Bashgit checkout -b feature/NewFeature
-Commit Your Changes:Bashgit commit -m "Add NewFeature"
-Push to the Branch:Bashgit push origin feature/NewFeature
-Open a Pull Request👨‍💻 AuthorTejas Kumar DComputer Science & Engineering Student | Full Stack & AI Developer🌐 GitHub: @Tejas-ux257💼 LinkedIn: Tejas Kumar D📧 Email: tejaskumard2004@gmail.com⭐ Found this repository useful? Give it a Star!Designed with ❤️ by Tejas Kumar D
+```
+
+---
+
+## 🏢 Department APIs
+
+| Method | Endpoint | Description | Access |
+|---------|----------|-------------|--------|
+| GET | `/departments` | Get all departments | Admin / HR |
+| POST | `/departments` | Create department | Admin |
+| PUT | `/departments/{id}` | Update department | Admin |
+| DELETE | `/departments/{id}` | Delete department | Admin |
+
+---
+
+## 👨‍💼 Employee APIs
+
+| Method | Endpoint | Description | Access |
+|---------|----------|-------------|--------|
+| GET | `/employees` | Get employees | Admin / HR |
+| POST | `/employees` | Add employee | Admin / HR |
+| PUT | `/employees/{id}` | Update employee | Admin / HR |
+| DELETE | `/employees/{id}` | Delete employee | Admin |
+
+---
+
+## 🕒 Attendance APIs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/employee/attendance/check-in` | Employee Check In |
+| POST | `/employee/attendance/check-out` | Employee Check Out |
+| GET | `/employee/attendance` | Attendance History |
+
+---
+
+## 📅 Leave APIs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/employee/leave` | Apply Leave |
+| GET | `/employee/leave` | Leave History |
+| PUT | `/leave/{id}` | Approve / Reject Leave |
+
+---
+
+## 💰 Payroll APIs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/payroll` | Generate Payroll |
+| GET | `/payroll` | Payroll List |
+| GET | `/employee/payroll` | Employee Payroll |
+
+# 🔐 Security Implementation
+
+The application follows industry-standard security practices.
+
+## Authentication
+
+- JWT Authentication
+- Secure Login
+- Token-Based Authorization
+
+---
+
+## Authorization
+
+- Role-Based Access Control (RBAC)
+- Admin Access
+- HR Access
+- Employee Access
+
+---
+
+## Password Security
+
+- bcrypt Password Hashing
+- Secure Password Storage
+- Salted Password Encryption
+
+---
+
+## API Protection
+
+- Protected REST APIs
+- JWT Middleware
+- Unauthorized Request Blocking
+
+---
+
+## Database Security
+
+- Parameterized SQL Queries
+- SQL Injection Prevention
+- Input Validation
+
+---
+
+## Environment Security
+
+Sensitive information is stored using environment variables.
+
+```env
+DB_PASSWORD=******
+JWT_SECRET_KEY=******
+```
+
+
+# 🚀 Deployment Guide
+
+## Backend Deployment
+
+Supported Platforms
+
+- Render
+- Railway
+- AWS EC2
+- DigitalOcean
+
+### Install Gunicorn
+
+```bash
+pip install gunicorn
+```
+
+### Start Command
+
+```bash
+gunicorn run:app
+```
+
+---
+
+## Frontend Deployment
+
+Supported Platforms
+
+- Vercel
+- Netlify
+
+### Build Project
+
+```bash
+npm run build
+```
+
+Set the following environment variable:
+
+```env
+VITE_API_BASE_URL=https://your-backend-url.com
+```
+
+# 📈 Future Roadmap
+
+## Planned Features
+
+- [ ] Email Notifications
+- [ ] SMS Notifications
+- [ ] Face Recognition Attendance
+- [ ] QR Code Attendance
+- [ ] AI Attendance Insights
+- [ ] Dashboard Analytics
+- [ ] PDF Reports
+- [ ] CSV Export
+- [ ] Docker Support
+- [ ] AWS Deployment
+- [ ] CI/CD Pipeline
+- [ ] Mobile Application
+
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+### 1. Fork the Repository
+
+Click the **Fork** button on GitHub.
+
+---
+
+### 2. Create a Feature Branch
+
+```bash
+git checkout -b feature/new-feature
+```
+
+---
+
+### 3. Commit Your Changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+---
+
+### 4. Push Changes
+
+```bash
+git push origin feature/new-feature
+```
+
+---
+
+### 5. Create a Pull Request
+
+Open a Pull Request describing your changes.
+
+
+
+# 👨‍💻 Author
+
+<div align="center">
+
+## Tejas Kumar D
+
+**Computer Science & Engineering Graduate**  
+**Full Stack Python Developer**
+
+### 🌐 Connect with Me
+
+GitHub: https://github.com/Tejas-ux257
+
+LinkedIn: https://www.linkedin.com/in/YOUR-LINKEDIN
+
+Email: tejaskumard2004@gmail.com
+
+---
+
+⭐ If you found this project useful, please consider giving it a **Star**.
+
+Made with ❤️ using **React**, **Flask**, and **MySQL**
+
+</div>
