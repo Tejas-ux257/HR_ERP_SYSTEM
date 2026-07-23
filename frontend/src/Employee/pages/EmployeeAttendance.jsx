@@ -10,15 +10,31 @@ import {
   FaRedoAlt,
   FaTimesCircle,
   FaArrowLeft,
+  FaSignInAlt,
+  FaSignOutAlt,
 } from "react-icons/fa";
 
-import { getMyAttendance } from "../Services/employeeAttendanceService";
+import {
+  getMyAttendance,
+  checkIn,
+  checkOut,
+} from "../Services/employeeAttendanceService";
 
 const EmployeeAttendance = () => {
   const navigate = useNavigate();
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [todayRecord, setTodayRecord] = useState(null);
+
+  // Helper to format Date objects to YYYY-MM-DD local time string
+  const getLocalDateString = (d = new Date()) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const fetchAttendance = useCallback(async (isSilent = false) => {
     try {
@@ -31,6 +47,20 @@ const EmployeeAttendance = () => {
         : data?.data || data?.attendance || [];
 
       setAttendance(records);
+
+      // Get today's date string in local timezone format (YYYY-MM-DD)
+      const todayStr = getLocalDateString(new Date());
+
+      const todayEntry = records.find((item) => {
+        const itemDateRaw = item.attendance_date || item.date;
+        if (!itemDateRaw) return false;
+
+        // Clean ISO strings or standard date strings
+        const cleanItemDate = String(itemDateRaw).split("T")[0];
+        return cleanItemDate === todayStr;
+      });
+
+      setTodayRecord(todayEntry || null);
     } catch (error) {
       console.error("Attendance fetch error:", error);
       toast.error(
@@ -48,11 +78,49 @@ const EmployeeAttendance = () => {
     fetchAttendance();
   }, [fetchAttendance]);
 
+  // Handle Check-In
+  const handleCheckIn = async () => {
+    setActionLoading(true);
+    try {
+      const res = await checkIn();
+      toast.success(res?.message || "Successfully checked in!");
+      await fetchAttendance(true);
+    } catch (error) {
+      console.error("Check-in error:", error);
+      toast.error(
+        error.response?.data?.message || error.message || "Failed to check in"
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Handle Check-Out
+  const handleCheckOut = async () => {
+    setActionLoading(true);
+    try {
+      const res = await checkOut();
+      toast.success(res?.message || "Successfully checked out!");
+      await fetchAttendance(true);
+    } catch (error) {
+      console.error("Check-out error:", error);
+      toast.error(
+        error.response?.data?.message || error.message || "Failed to check out"
+      );
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     const cleanStr = String(dateStr).split("T")[0];
-    const dateObj = new Date(cleanStr);
+    const [year, month, day] = cleanStr.split("-");
+
+    // Construct local Date object to avoid UTC offset shifts
+    const dateObj = new Date(year, month - 1, day);
     if (isNaN(dateObj.getTime())) return cleanStr;
+
     return dateObj.toLocaleDateString("en-US", {
       day: "2-digit",
       month: "short",
@@ -63,14 +131,14 @@ const EmployeeAttendance = () => {
   const getStatusBadge = (statusStr) => {
     const status = (statusStr || "Absent").trim().toLowerCase();
 
-    if (status === "present") {
+    if (status === "present" || status === "checked out") {
       return (
-        <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 fw-semibold">
-          Present
+        <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 fw-semibold text-capitalize">
+          {statusStr}
         </span>
       );
     }
-    if (status === "half day" || status === "late") {
+    if (status === "checked in" || status === "half day" || status === "late") {
       return (
         <span className="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-2 fw-semibold text-capitalize">
           {statusStr}
@@ -78,7 +146,7 @@ const EmployeeAttendance = () => {
       );
     }
     return (
-      <span className="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2 fw-semibold">
+      <span className="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2 fw-semibold text-capitalize">
         {statusStr || "Absent"}
       </span>
     );
@@ -96,10 +164,20 @@ const EmployeeAttendance = () => {
   }
 
   const totalDays = attendance.length;
-  const presentDays = attendance.filter(
-    (item) => (item.status || "").toLowerCase() === "present"
-  ).length;
-  const absentDays = totalDays - presentDays;
+  const presentDays = attendance.filter((item) => {
+    const st = (item.status || "").toLowerCase();
+    return st === "present" || st === "checked in" || st === "checked out";
+  }).length;
+  const absentDays = Math.max(0, totalDays - presentDays);
+
+  // Check-In and Check-Out field resolvers (handles both check_in and check_in_time)
+  const checkInVal = todayRecord?.check_in_time || todayRecord?.check_in;
+  const checkOutVal = todayRecord?.check_out_time || todayRecord?.check_out;
+
+  const isCheckedIn =
+    Boolean(checkInVal) && checkInVal !== "--:--" && checkInVal !== "-";
+  const isCheckedOut =
+    Boolean(checkOutVal) && checkOutVal !== "--:--" && checkOutVal !== "-";
 
   return (
     <EmployeeLayout>
@@ -143,6 +221,48 @@ const EmployeeAttendance = () => {
             <FaRedoAlt className={refreshing ? "spin-icon" : ""} />
             <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
           </button>
+        </div>
+
+        {/* Action Box */}
+        <div className="bg-white rounded-4 p-4 shadow-sm border mb-4">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+              <h5 className="fw-bold text-dark mb-1">Pledge Today's Attendance</h5>
+              <p className="text-muted small mb-0">
+                {!isCheckedIn
+                  ? "You have not checked in for today yet."
+                  : isCheckedOut
+                  ? "You have completed your shift for today."
+                  : `Checked in at: ${checkInVal}`}
+              </p>
+            </div>
+
+            <div>
+              {!isCheckedIn ? (
+                <button
+                  onClick={handleCheckIn}
+                  disabled={actionLoading}
+                  className="btn btn-success px-4 py-2 rounded-3 d-flex align-items-center gap-2 fw-semibold shadow-sm"
+                >
+                  <FaSignInAlt />
+                  <span>{actionLoading ? "Pledging Check-In..." : "Check In Now"}</span>
+                </button>
+              ) : !isCheckedOut ? (
+                <button
+                  onClick={handleCheckOut}
+                  disabled={actionLoading}
+                  className="btn btn-danger px-4 py-2 rounded-3 d-flex align-items-center gap-2 fw-semibold shadow-sm"
+                >
+                  <FaSignOutAlt />
+                  <span>{actionLoading ? "Pledging Check-Out..." : "Check Out Now"}</span>
+                </button>
+              ) : (
+                <span className="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2 border border-success-subtle">
+                  <FaCheckCircle /> Today's Shift Completed
+                </span>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Summary Cards */}
@@ -246,15 +366,15 @@ const EmployeeAttendance = () => {
                   attendance.map((item, index) => (
                     <tr key={item.id || item._id || index}>
                       <td className="fw-medium text-dark py-3">
-                        {formatDate(item.attendance_date)}
+                        {formatDate(item.attendance_date || item.date)}
                       </td>
 
                       <td className="text-secondary fw-normal">
-                        {item.check_in || "--:--"}
+                        {item.check_in_time || item.check_in || "--:--"}
                       </td>
 
                       <td className="text-secondary fw-normal">
-                        {item.check_out || "--:--"}
+                        {item.check_out_time || item.check_out || "--:--"}
                       </td>
 
                       <td>{getStatusBadge(item.status)}</td>

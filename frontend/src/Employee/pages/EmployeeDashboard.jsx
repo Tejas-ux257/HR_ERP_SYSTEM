@@ -1,179 +1,140 @@
-import { useEffect, useState, useCallback } from "react";
-import EmployeeLayout from "../layouts/EmployeeLayout";
-import api from "../../api/axios"; // Adjust path to axios instance if needed
-import LoadingSpinner from "../../components/Common/LoadingSpinner";
+import { useEffect, useState } from "react";
+import EmployeeLayout from "../Layouts/EmployeeLayout";
+import { FaClock, FaCalendarCheck, FaClipboardList, FaFileInvoiceDollar, FaUserCheck } from "react-icons/fa";
 
-export default function MyProfile() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function EmployeeDashboard() {
+  const [user, setUser] = useState({});
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  const fetchProfile = useCallback(async () => {
-    // Read from localStorage inside callback to avoid ESLint dependency warnings
+  const loadUserData = () => {
     const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-    const userId = storedUser.employee_id || storedUser.id;
-
-    if (!userId) {
-      setProfile(storedUser);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      // Try fetching specific employee profile endpoint
-      let response;
-      try {
-        response = await api.get(`/employees/${userId}`);
-      } catch {
-        // Fallback endpoint if /employees/:id isn't available
-        response = await api.get(`/profile`);
-      }
-
-      const data = response.data?.data || response.data || {};
-
-      // Merge backend data with stored user info as fallback
-      setProfile({ ...storedUser, ...data });
-    } catch (error) {
-      console.error("Error fetching employee profile:", error);
-      // Fall back to localStorage data on network error
-      setProfile(storedUser);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    setUser(storedUser);
+  };
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    loadUserData();
 
-  if (loading) {
-    return (
-      <EmployeeLayout>
-        <LoadingSpinner message="Fetching profile details..." />
-      </EmployeeLayout>
-    );
-  }
+    // Live Clock interval
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
 
-  // Safe fallback values from localStorage if state is missing
-  const localUser = JSON.parse(localStorage.getItem("user")) || {};
+    // Listen for custom profile update events
+    window.addEventListener("userProfileUpdated", loadUserData);
 
-  // Extract properties with flexible fallback options matching common backend structures
-  const fullName = profile?.name || profile?.full_name || localUser.name || "N/A";
-  const email = profile?.email || localUser.email || "N/A";
-  const phone = profile?.phone || profile?.phone_number || profile?.mobile || "N/A";
-  const department =
-    profile?.department_name ||
-    profile?.department?.name ||
-    profile?.department ||
-    "N/A";
-  const role = profile?.designation || profile?.role || localUser.role || "Employee";
-  const gender = profile?.gender || "N/A";
-  const dob = profile?.dob || profile?.date_of_birth || "N/A";
-  const address = profile?.address || "N/A";
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("userProfileUpdated", loadUserData);
+    };
+  }, []);
 
-  const firstInitial = fullName !== "N/A" ? fullName.charAt(0).toUpperCase() : "U";
+  const userName = user.name || user.fullName || user.full_name || "Employee";
 
   return (
     <EmployeeLayout>
       <div className="container-fluid px-0">
-        {/* Top Header */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
+        {/* Live Welcome Header */}
+        <div className="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border">
           <div>
-            <span
-              className="px-2.5 py-1 rounded-pill small fw-semibold"
-              style={{ backgroundColor: "#e2e8f0", color: "#475569", fontSize: "12px" }}
-            >
-              Employee Self-Service
-            </span>
-            <h2 className="fw-bold text-dark mt-1 mb-0">My Profile</h2>
+            <h2 className="fw-bold text-dark mb-1">Welcome back, {userName}! 👋</h2>
+            <p className="text-muted mb-0">Here is your live daily status and attendance activity log.</p>
           </div>
-          <button className="btn btn-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center gap-2">
-            <i className="bi bi-pencil-square"></i> Edit Profile
-          </button>
+          <div className="text-end">
+            <span className="badge bg-primary-subtle text-primary fs-6 px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2">
+              <FaClock /> {currentTime.toLocaleTimeString()}
+            </span>
+            <div className="text-muted small mt-1">
+              {currentTime.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            </div>
+          </div>
         </div>
 
-        {/* Profile Details Box */}
-        <div className="bg-white rounded-4 p-4 shadow-sm border-0 mb-4">
-          {/* Avatar and Main Header Info */}
-          <div className="d-flex align-items-center gap-3 pb-4 mb-4 border-bottom">
-            <div
-              className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-2"
-              style={{ width: "72px", height: "72px", minWidth: "72px" }}
-            >
-              {firstInitial}
-            </div>
-            <div>
-              <h3 className="fw-bold text-dark mb-1">{fullName}</h3>
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1">
-                  {role}
-                </span>
-                <span className="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1">
-                  {department}
-                </span>
+        {/* Live Overview Cards */}
+        <div className="row g-3 mb-4">
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <span className="text-muted small d-block mb-1">Today's Status</span>
+                  <h5 className="fw-bold text-success mb-0">Present</h5>
+                </div>
+                <div className="p-3 bg-success-subtle text-success rounded-circle">
+                  <FaCalendarCheck className="fs-4" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Grid Information Fields */}
-          <div className="row g-4">
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                FULL NAME
-              </label>
-              <p className="fw-medium text-dark mb-0">{fullName}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                EMAIL ADDRESS
-              </label>
-              <p className="fw-medium text-dark mb-0">{email}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                PHONE NUMBER
-              </label>
-              <p className="fw-medium text-dark mb-0">{phone}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                ASSIGNED DEPARTMENT
-              </label>
-              <p className="fw-medium text-dark mb-0">{department}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                ROLE / DESIGNATION
-              </label>
-              <p className="fw-medium text-dark mb-0">{role}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                GENDER
-              </label>
-              <p className="fw-medium text-dark mb-0">{gender}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                DATE OF BIRTH
-              </label>
-              <p className="fw-medium text-dark mb-0">{dob}</p>
-            </div>
-
-            <div className="col-12 col-md-6">
-              <label className="text-muted small fw-bold text-uppercase d-block mb-1" style={{ fontSize: "11px" }}>
-                ADDRESS
-              </label>
-              <p className="fw-medium text-dark mb-0">{address}</p>
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <span className="text-muted small d-block mb-1">Leave Balance</span>
+                  <h5 className="fw-bold text-primary mb-0">12 Days</h5>
+                </div>
+                <div className="p-3 bg-primary-subtle text-primary rounded-circle">
+                  <FaClipboardList className="fs-4" />
+                </div>
+              </div>
             </div>
           </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <span className="text-muted small d-block mb-1">Shift Hours</span>
+                  <h5 className="fw-bold text-dark mb-0">09:00 - 18:00</h5>
+                </div>
+                <div className="p-3 bg-warning-subtle text-warning rounded-circle">
+                  <FaClock className="fs-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card border-0 shadow-sm rounded-4 p-3 bg-white">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <span className="text-muted small d-block mb-1">Latest Slip</span>
+                  <h5 className="fw-bold text-info mb-0">Generated</h5>
+                </div>
+                <div className="p-3 bg-info-subtle text-info rounded-circle">
+                  <FaFileInvoiceDollar className="fs-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Activity Feed */}
+        <div className="bg-white rounded-4 shadow-sm p-4 border">
+          <h5 className="fw-bold text-dark mb-3">Live Status & Activity Log</h5>
+          <ul className="list-group list-group-flush">
+            <li className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+              <div className="d-flex align-items-center gap-3">
+                <div className="p-2 bg-primary-subtle text-primary rounded-circle">
+                  <FaUserCheck />
+                </div>
+                <div>
+                  <span className="fw-semibold text-dark d-block">Profile Synchronized</span>
+                  <p className="text-muted small mb-0">Verified identity details for employee: <strong>{userName}</strong></p>
+                </div>
+              </div>
+              <span className="badge bg-light text-dark border">Live</span>
+            </li>
+            <li className="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+              <div className="d-flex align-items-center gap-3">
+                <div className="p-2 bg-success-subtle text-success rounded-circle">
+                  <FaCalendarCheck />
+                </div>
+                <div>
+                  <span className="fw-semibold text-dark d-block">System Clock-In</span>
+                  <p className="text-muted small mb-0">Authenticated and logged in to employee portal</p>
+                </div>
+              </div>
+              <span className="badge bg-light text-dark border">Today</span>
+            </li>
+          </ul>
         </div>
       </div>
     </EmployeeLayout>

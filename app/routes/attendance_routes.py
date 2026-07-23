@@ -6,7 +6,7 @@ from app.controllers.attendance_controller import (
     get_all_attendance_controller,
     get_employee_attendance_controller,
     get_today_attendance_controller,
-    my_attendance_controller
+    my_attendance_controller,
 )
 
 attendance_bp = Blueprint(
@@ -14,54 +14,64 @@ attendance_bp = Blueprint(
     __name__
 )
 
-
 # ==========================================================
-# Check In
+# Admin Check In
 # ==========================================================
 attendance_bp.route(
     "/attendance/check-in",
     methods=["POST"]
 )(check_in_controller)
 
+# ==========================================================
+# Employee Check In
+# ==========================================================
+attendance_bp.route(
+    "/employee/attendance/check-in",
+    methods=["POST"]
+)(check_in_controller)
 
 # ==========================================================
-# Check Out
+# Admin Check Out
 # ==========================================================
 attendance_bp.route(
     "/attendance/check-out",
     methods=["PUT"]
 )(check_out_controller)
 
+# ==========================================================
+# Employee Check Out
+# ==========================================================
+attendance_bp.route(
+    "/employee/attendance/check-out",
+    methods=["POST"]
+)(check_out_controller)
 
 # ==========================================================
-# Get All Attendance (Admin/HR)
+# Admin Attendance List
 # ==========================================================
 attendance_bp.route(
     "/attendance",
     methods=["GET"]
 )(get_all_attendance_controller)
 
-
 # ==========================================================
-# Get Particular Employee Attendance (Admin/HR)
-# ==========================================================
-attendance_bp.route(
-    "/attendance/<int:employee_id>",
-    methods=["GET"]
-)(get_employee_attendance_controller)
-
-
-# ==========================================================
-# Get Logged-in Employee Attendance
+# Employee Attendance History
 # ==========================================================
 attendance_bp.route(
     "/employee/attendance",
     methods=["GET"]
 )(my_attendance_controller)
 
+# ==========================================================
+# Admin Employee Attendance
+# ==========================================================
+attendance_bp.route(
+    "/attendance/<int:employee_id>",
+    methods=["GET"]
+)(get_employee_attendance_controller)
 
 # ==========================================================
-# Get Today's Attendance (Admin/HR)
+# Admin Today Attendance
 # ==========================================================
 attendance_bp.route(
     "/attendance/today",

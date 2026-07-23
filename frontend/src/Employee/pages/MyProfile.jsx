@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-import EmployeeLayout from "../layouts/EmployeeLayout";
-import { getProfile, updateProfile } from "../../services/profileService";
+import EmployeeLayout from "../Layouts/EmployeeLayout";
+import { getProfile, updateProfile } from "../Services/profileService";
 import LoadingSpinner from "../../components/Common/LoadingSpinner";
 import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
 
@@ -21,19 +21,13 @@ export default function MyProfile() {
     dob: "",
   });
 
-  // Comprehensive extraction helper to handle any backend data structure
+  // Extract and standardize response objects
   const extractProfileData = (res) => {
     if (!res) return null;
-    let data = res;
-    if (res.data) data = res.data;
-    if (data.data) data = data.data;
-    if (data.user) data = data.user;
-    if (data.profile) data = data.profile;
-    if (data.employee) data = data.employee;
+    let data = res.data?.data || res.data?.user || res.data?.profile || res.data || res;
 
     if (typeof data !== "object") return null;
 
-    // Standardize object keys so active fields never return N/A
     return {
       ...data,
       name: data.name || data.fullName || data.full_name || data.username || "",
@@ -43,7 +37,7 @@ export default function MyProfile() {
       gender: data.gender || "",
       dob: data.dob || data.date_of_birth || data.dateOfBirth || "",
       role: data.role || data.designation || "Employee",
-      department: data.department?.name || data.department_name || data.department || "",
+      department: data.department?.name || data.department_name || (typeof data.department === "string" ? data.department : ""),
     };
   };
 
@@ -53,12 +47,7 @@ export default function MyProfile() {
     setEditFormData({
       name: data?.name || data?.fullName || data?.full_name || "",
       email: data?.email || data?.emailAddress || data?.email_address || "",
-      phone:
-        data?.phone ||
-        data?.phone_number ||
-        data?.phoneNumber ||
-        data?.mobile ||
-        "",
+      phone: data?.phone || data?.phone_number || data?.phoneNumber || data?.mobile || "",
       address: data?.address || "",
       gender: data?.gender || "",
       dob: rawDob ? String(rawDob).split("T")[0] : "",
@@ -74,6 +63,7 @@ export default function MyProfile() {
         setProfile(extracted);
         populateFormData(extracted);
         localStorage.setItem("user", JSON.stringify(extracted));
+        window.dispatchEvent(new Event("userProfileUpdated"));
       }
     } catch (error) {
       console.error("Failed to fetch employee profile:", error);
@@ -98,9 +88,7 @@ export default function MyProfile() {
     const storedUser = JSON.parse(localStorage.getItem("user")) || {};
     const currentUserData = profile || storedUser;
 
-    // Create immediate updated state from form inputs
-    const updatedState = {
-      ...currentUserData,
+    const payload = {
       name: editFormData.name,
       full_name: editFormData.name,
       email: editFormData.email,
@@ -113,42 +101,25 @@ export default function MyProfile() {
     };
 
     try {
-      const payload = {
-        name: editFormData.name,
-        full_name: editFormData.name,
-        email: editFormData.email,
-        phone: editFormData.phone,
-        phone_number: editFormData.phone,
-        address: editFormData.address,
-        gender: editFormData.gender,
-        dob: editFormData.dob,
-        date_of_birth: editFormData.dob,
-      };
-
-      // 1. Send update request
       const res = await updateProfile(payload);
       const serverData = extractProfileData(res);
 
-      // 2. Merge server response with updated form data
       const finalData = {
-        ...updatedState,
+        ...currentUserData,
+        ...payload,
         ...(serverData && (serverData.name || serverData.email) ? serverData : {}),
       };
 
-      // 3. Persist to State and localStorage immediately
       setProfile(finalData);
       populateFormData(finalData);
       localStorage.setItem("user", JSON.stringify(finalData));
+      window.dispatchEvent(new Event("userProfileUpdated"));
 
       toast.success("Profile updated successfully!");
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error(
-        error.response?.data?.message ||
-          error.response?.data?.error ||
-          "Failed to save profile changes."
-      );
+      toast.error(error.message || "Failed to save profile changes.");
     } finally {
       setSaving(false);
     }
@@ -171,41 +142,15 @@ export default function MyProfile() {
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
   const userData = profile || storedUser;
 
-  const activeName =
-    userData?.name ||
-    userData?.fullName ||
-    userData?.full_name ||
-    userData?.username ||
-    "N/A";
-
-  const activeEmail =
-    userData?.email ||
-    userData?.emailAddress ||
-    userData?.email_address ||
-    "N/A";
-
-  const activePhone =
-    userData?.phone ||
-    userData?.phone_number ||
-    userData?.phoneNumber ||
-    userData?.mobile ||
-    "N/A";
-
-  const activeRole =
-    userData?.role ||
-    userData?.designation ||
-    "Employee";
-
-  const activeDept =
-    userData?.department?.name ||
-    userData?.department_name ||
-    (typeof userData?.department === "string" ? userData?.department : "N/A");
-
+  const activeName = userData?.name || userData?.fullName || userData?.full_name || "N/A";
+  const activeEmail = userData?.email || userData?.emailAddress || userData?.email_address || "N/A";
+  const activePhone = userData?.phone || userData?.phone_number || "N/A";
+  const activeRole = userData?.role || userData?.designation || "Employee";
+  const activeDept = userData?.department?.name || userData?.department_name || (typeof userData?.department === "string" ? userData?.department : "N/A");
   const activeAddress = userData?.address || "N/A";
   const activeGender = userData?.gender || "N/A";
 
-  const rawDob =
-    userData?.dob || userData?.date_of_birth || userData?.dateOfBirth;
+  const rawDob = userData?.dob || userData?.date_of_birth || userData?.dateOfBirth;
   const activeDob = rawDob ? String(rawDob).split("T")[0] : "N/A";
 
   return (

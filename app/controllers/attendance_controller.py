@@ -11,11 +11,6 @@ from app.services.attendance_service import (
     get_today_attendance
 )
 
-from app.validators.attendance_validator import (
-    validate_check_in,
-    validate_check_out
-)
-
 from app.utils.response import (
     success_response,
     error_response
@@ -29,21 +24,26 @@ from app.utils.response import (
 @roles_required("Admin", "HR", "Employee")
 def check_in_controller():
     """
-    Employee Check-In
+    Admin/HR:
+        POST /attendance/check-in
+        {
+            "employee_id": 5
+        }
+
+    Employee:
+        POST /employee/attendance/check-in
+        (No body required)
     """
 
     try:
+        data = request.get_json(silent=True) or {}
 
-        data = request.get_json()
+        if "employee_id" in data:
+            employee_id = data["employee_id"]
+        else:
+            employee_id = g.current_user["employee_id"]
 
-        error = validate_check_in(data)
-
-        if error:
-            return error_response(error, 400)
-
-        attendance = check_in(
-            data["employee_id"]
-        )
+        attendance = check_in(employee_id)
 
         return success_response(
             attendance,
@@ -52,10 +52,7 @@ def check_in_controller():
         )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)
 
 
 # ==========================================================
@@ -65,21 +62,26 @@ def check_in_controller():
 @roles_required("Admin", "HR", "Employee")
 def check_out_controller():
     """
-    Employee Check-Out
+    Admin/HR:
+        PUT /attendance/check-out
+        {
+            "employee_id": 5
+        }
+
+    Employee:
+        POST /employee/attendance/check-out
+        (No body required)
     """
 
     try:
+        data = request.get_json(silent=True) or {}
 
-        data = request.get_json()
+        if "employee_id" in data:
+            employee_id = data["employee_id"]
+        else:
+            employee_id = g.current_user["employee_id"]
 
-        error = validate_check_out(data)
-
-        if error:
-            return error_response(error, 400)
-
-        attendance = check_out(
-            data["employee_id"]
-        )
+        attendance = check_out(employee_id)
 
         return success_response(
             attendance,
@@ -87,10 +89,7 @@ def check_out_controller():
         )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)
 
 
 # ==========================================================
@@ -99,32 +98,26 @@ def check_out_controller():
 @jwt_required
 @roles_required("Admin", "HR")
 def get_all_attendance_controller():
-    """
-    Get All Attendance Records
-    """
 
     try:
 
         attendance = get_all_attendance()
 
-        return success_response(attendance)
+        return success_response(
+            attendance,
+            "Attendance fetched successfully"
+        )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)
 
 
 # ==========================================================
-# Admin/HR - Get Particular Employee Attendance
+# Admin/HR - Particular Employee Attendance
 # ==========================================================
 @jwt_required
 @roles_required("Admin", "HR")
 def get_employee_attendance_controller(employee_id):
-    """
-    Get Attendance History of Particular Employee
-    """
 
     try:
 
@@ -136,10 +129,7 @@ def get_employee_attendance_controller(employee_id):
         )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)
 
 
 # ==========================================================
@@ -148,9 +138,6 @@ def get_employee_attendance_controller(employee_id):
 @jwt_required
 @roles_required("Employee")
 def my_attendance_controller():
-    """
-    Logged-in Employee Attendance
-    """
 
     try:
 
@@ -164,10 +151,7 @@ def my_attendance_controller():
         )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)
 
 
 # ==========================================================
@@ -176,18 +160,15 @@ def my_attendance_controller():
 @jwt_required
 @roles_required("Admin", "HR")
 def get_today_attendance_controller():
-    """
-    Get Today's Attendance
-    """
 
     try:
 
         attendance = get_today_attendance()
 
-        return success_response(attendance)
+        return success_response(
+            attendance,
+            "Today's attendance fetched successfully"
+        )
 
     except Exception as e:
-        return error_response(
-            str(e),
-            400
-        )
+        return error_response(str(e), 400)

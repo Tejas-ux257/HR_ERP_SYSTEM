@@ -1,8 +1,9 @@
-import api from "../../api/axios"; // Ensure this matches your existing base API setup file
-// Fetch profile
+import api from "../../api/axios";
+
+// Fetch current employee profile
 export const getProfile = async () => {
   try {
-    const response = await api.get("/profile");
+    const response = await api.get("/employee/profile");
     return response.data;
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -10,15 +11,28 @@ export const getProfile = async () => {
   }
 };
 
-// Update profile - try PUT first, or change to api.post / api.patch if needed
+// Update current employee profile
 export const updateProfile = async (profileData) => {
   try {
-    // If your backend expects POST or PATCH instead of PUT, change api.put to api.post or api.patch
-    const response = await api.put("/profile", profileData); 
-    console.log("Update profile API response:", response.data);
+    const response = await api.put("/employee/profile", profileData);
     return response.data;
   } catch (error) {
-    console.error("Error updating profile in service:", error.response || error);
+    console.error("Error updating profile:", error);
+    throw error;
+  }
+};
+
+// Upload profile picture / documents
+export const uploadProfileImage = async (formData) => {
+  try {
+    const response = await api.post("/employee/profile/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading profile image:", error);
     throw error;
   }
 };
