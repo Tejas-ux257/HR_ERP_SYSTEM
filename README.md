@@ -1,357 +1,135 @@
-# HR ERP System Backend
+<div align="center">
 
-A RESTful backend API built using **Python Flask** and **MySQL** following a **Layered Architecture**.
+  <!-- Animated Header Banner -->
+  <a href="https://github.com/Tejas-ux257/HR_ERP_SYSTEM">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=32&pause=1000&color=61DAFB&center=true&vcenter=true&width=700&height=70&lines=%F0%9F%9A%80+HR+ERP+SYSTEM;Enterprise+Human+Resource+Platform;React+%E2%80%A2+Flask+%E2%80%A2+MySQL+%E2%80%A2+JWT" alt="Typing Header" />
+  </a>
 
-The project manages **Departments** and **Employees** and is designed to be scalable for future HR ERP modules such as Attendance, Payroll, Leave Management, Authentication, and Reports.
+  <p align="center">
+    <strong>A modern, enterprise-grade Full Stack Human Resource Management System built for scalable workforce management.</strong>
+  </p>
 
----
+  <!-- Badges -->
+  <p align="center">
+    <a href="https://github.com/Tejas-ux257/HR_ERP_SYSTEM/stargazers"><img src="https://img.shields.io/github/stars/Tejas-ux257/HR_ERP_SYSTEM?style=for-the-badge&color=gold" alt="Stars"></a>
+    <a href="https://github.com/Tejas-ux257/HR_ERP_SYSTEM/network/members"><img src="https://img.shields.io/github/forks/Tejas-ux257/HR_ERP_SYSTEM?style=for-the-badge&color=orange" alt="Forks"></a>
+    <a href="https://github.com/Tejas-ux257/HR_ERP_SYSTEM/issues"><img src="https://img.shields.io/github/issues/Tejas-ux257/HR_ERP_SYSTEM?style=for-the-badge&color=red" alt="Issues"></a>
+    <a href="https://github.com/Tejas-ux257/HR_ERP_SYSTEM/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Tejas-ux257/HR_ERP_SYSTEM?style=for-the-badge&color=green" alt="License"></a>
+  </p>
 
-## Tech Stack
+  <p align="center">
+    <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+    <img src="https://img.shields.io/badge/Flask-2.x-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask">
+    <img src="https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React">
+    <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+    <img src="https://img.shields.io/badge/JWT-Secure-000000?style=flat-square&logo=json-web-tokens&logoColor=white" alt="JWT">
+    <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=flat-square&logo=bootstrap&logoColor=white" alt="Bootstrap">
+  </p>
 
-- Python 3.x
-- Flask
-- Flask-CORS
-- MySQL
-- MySQL Connector
-- python-dotenv
+  <p align="center">
+    <a href="#-demo--previews">View Demo</a> •
+    <a href="#-key-features">Key Features</a> •
+    <a href="#-system-architecture">Architecture</a> •
+    <a href="#-installation--setup">Quick Start</a> •
+    <a href="#-api-documentation">API Docs</a>
+  </p>
 
----
-
-## Project Architecture
-
-The project follows a layered architecture.
-
-Client
-↓
-
-Routes
-
-↓
-
-Controllers
-
-↓
-
-Validators
-
-↓
-
-Services
-
-↓
-
-Database
-
-↓
-
-Models
-
-↓
-
-JSON Response
-
-
-Each layer has a single responsibility.
+</div>
 
 ---
 
-## Project Structure
+## 📌 Table of Contents
 
-
-erp_sys/
-│
-├── .env
-├── .gitignore
-├── README.md
-├── requirements.txt
-├── run.py
-│
-├── app/
-│
-├── config.py
-├── database.py
-├── controllers/
-├── models/
-├── routes/
-├── services/
-├── validators/
-└── utils/
-
+- [Overview](#-overview)
+- [Industry Problem vs Solution](#-industry-problem-vs-proposed-solution)
+- [Demo & Previews](#-demo--previews)
+- [System Architecture](#-system-architecture)
+- [Database Schema (ER Diagram)](#-database-schema-er-diagram)
+- [Key Features & Role Matrix](#-key-features--role-matrix)
+- [Technology Stack](#-technology-stack)
+- [Project Directory Structure](#-project-directory-structure)
+- [Installation & Setup](#-installation--setup)
+- [API Documentation](#-api-documentation)
+- [Security Implementation](#-security-implementation)
+- [Deployment Guide](#-deployment-guide)
+- [Future Roadmap](#-future-roadmap)
+- [Troubleshooting & FAQ](#-troubleshooting--faq)
+- [Author & Acknowledgments](#-author--acknowledgments)
 
 ---
 
-## Database
+## 🌟 Overview
 
-Database Name
+As organizations scale, managing employee lifecycles using disjointed spreadsheets, paper applications, and email chains introduces operational friction, data redundancy, and security risks. 
 
-
-hr_erp_db
-
-
-### Departments
-
-| Column | Type |
-|---------|------|
-| department_id | INT |
-| department_name | VARCHAR(100) |
-| department_code | VARCHAR(20) |
+The **HR ERP System** is an end-to-end, full-stack enterprise web application designed to digitize, streamline, and secure core human resource processes. From **automated attendance logging** and **tiered leave approvals** to **dynamic monthly payroll calculations** and **Role-Based Access Control (RBAC)**, this platform centralizes corporate workforce management into a unified dashboard.
 
 ---
 
-### Employees
+## 🎯 Industry Problem vs Proposed Solution
 
-| Column | Type |
-|---------|------|
-| id | INT |
-| department_id | INT (Foreign Key) |
-| name | VARCHAR(100) |
-| phone | VARCHAR(15) |
-| email | VARCHAR(100) |
-
----
-
-## API Modules
-
-### Department Module
-
-Implemented
-
-- Create Department
-- Get All Departments
-- Get Department By ID
-- Update Department
-- Delete Department
-
-### Employee Module
-
-Coming Next
-
-- Create Employee
-- Get All Employees
-- Get Employee
-- Update Employee
-- Delete Employee
+| Industry Pain Points ❌ | HR ERP Platform Solution ✅ |
+| :--- | :--- |
+| **Manual & Error-Prone Attendance**: Pen-and-paper or manual spreadsheet logs lead to inaccuracies. | **Digital Check-In System**: Real-time timestamps for check-in/out tied directly to payroll logs. |
+| **Opaque Leave Management**: Untracked paper forms result in delayed approvals and scheduling conflicts. | **Automated Leave Workflow**: Employees apply online; Admins/HR approve/reject with real-time status updates. |
+| **Payroll Miscalculations**: Manual tax, deduction, and bonus calculations cause financial discrepancies. | **Dynamic Salary Engine**: Automated monthly payroll processing factoring in attendance and allowances. |
+| **Data Silos & Security Risks**: Unauthorized access to sensitive compensation data in unencrypted files. | **JWT & RBAC Security**: Granular access control ensuring users only view data explicitly permitted by their role. |
 
 ---
 
-## API Endpoints
+## 🎬 Demo & Previews
 
-### Departments
+> **Note:** Replace placeholders below with actual recordings/screenshots of your app.
 
-| Method | Endpoint |
-|---------|----------|
-| POST | /departments |
-| GET | /departments |
-| GET | /departments/{id} |
-| PUT | /departments/{id} |
-| DELETE | /departments/{id} |
+### 🎥 Application Walkthrough
+![HR ERP System Walkthrough Placeholder](https://via.placeholder.com/1000x500/0f172a/61DAFB?text=Insert+Animated+GIF+or+Demo+Video+Here)
 
----
+### 📸 Core Interface Screenshots
 
-## Installation
+<details>
+<summary>🔍 <b>Click to expand UI Screenshots</b></summary>
 
-Clone the repository.
+<br />
 
-```bash
-git clone <repository-url>
+| Admin Dashboard | HR Management Portal |
+| :---: | :---: |
+| ![Admin Dashboard](https://via.placeholder.com/450x250/1e293b/ffffff?text=Admin+Dashboard+Preview) | ![HR Dashboard](https://via.placeholder.com/450x250/1e293b/ffffff?text=HR+Portal+Preview) |
 
-Go to the project.
+| Employee Self-Service Portal | Attendance & Payroll Views |
+| :---: | :---: |
+| ![Employee Portal](https://via.placeholder.com/450x250/1e293b/ffffff?text=Employee+Portal+Preview) | ![Payroll View](https://via.placeholder.com/450x250/1e293b/ffffff?text=Payroll+Module+Preview) |
 
-cd erp_sys
-
-Create virtual environment.
-
-python -m venv venv
-
-Activate virtual environment.
-
-Windows
-
-venv\Scripts\activate
-
-Linux / macOS
-
-source venv/bin/activate
-
-Install dependencies.
-
-pip install -r requirements.txt
-Environment Variables
-
-Create a .env file.
-
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=hr_erp_db
-DB_USER=app_user
-DB_PASSWORD=AppPassword123
-
-APP_PORT=8080
-FLASK_ENV=development
-FLASK_DEBUG=True
-Run Application
-python run.py
-
-Server runs on
-
-http://localhost:8080
-
-Testing APIs
-Create Department
-curl -X POST http://localhost:8080/departments \
--H "Content-Type: application/json" \
--d '{"department_name":"IT","department_code":"IT001"}'
-Get Departments
-curl http://localhost:8080/departments
-API Response Format
-
-Success
-
-{
-    "status":"success",
-    "message":"Success",
-    "data":{}
-}
-
-Error
-
-{
-    "status":"error",
-    "message":"Department not found"
-}
-
-Future Modules:
-
-Employee Management
-Attendance Management
-Leave Management
-Payroll Management
-User Authentication
-Role Based Access Control (RBAC)
-Reports
-Dashboard APIs
-
-
-# HR ERP System Backend
-
-A RESTful Backend API built using **Python Flask** and **MySQL** following a **Layered Architecture**.
+</details>
 
 ---
 
-## 🚀 Current Status
+## 🏗 System Architecture
 
-✅ Department CRUD Module Completed
+The application adopts a **Client-Server Architecture** featuring a decoupled **React SPA (Single Page Application)** frontend communicating via RESTful JSON endpoints with a **Flask Application Factory** backend, backed by an optimized **MySQL** relational database.
 
-- Create Department
-- Get All Departments
-- Get Department by ID
-- Update Department
-- Delete Department
+```mermaid
+graph TD
+    %% User Tier
+    subgraph Client Tier [Frontend - React SPA]
+        A[Admin / HR / Employee UI] -->|React Router| B[State & Hooks]
+        B -->|Axios REST Client| C[JWT Authorization Header]
+    end
 
-🚧 Employee Module (In Progress)
+    %% Network
+    C -->|HTTPS / JSON API Requests| D[Flask Gateway Middleware]
 
----
+    %% Backend Server
+    subgraph Server Tier [Backend - Python Flask]
+        D --> E{JWT Validator}
+        E -->|Authenticated| F[Blueprints Routing Layer]
+        E -->|Unauthorized| G[401 / 403 Standard JSON Response]
+        
+        F --> H[Controllers Layer]
+        H --> I[Business Logic Services]
+        I --> J[Data Access / ORM Layer]
+    end
 
-## 🛠️ Tech Stack
-
-- Python 3
-- Flask
-- Flask-CORS
-- MySQL
-- MySQL Connector
-- Python Dotenv
-
----
-
-## 📂 Project Structure
-
-```text
-erp_sys/
-│
-├── app/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── services/
-│   ├── validators/
-│   └── utils/
-│
-├── .env
-├── requirements.txt
-└── run.py
-```
-
----
-
-## 🗄️ Database
-
-Database Name
-
-```
-hr_erp_db
-```
-
-Tables
-
-- departments
-- employees
-
----
-
-## 📌 Department APIs
-
-| Method | Endpoint |
-|---------|----------|
-| POST | `/departments` |
-| GET  | `/departments` |
-| GET  | `/departments/{id}` |
-| PUT  | `/departments/{id}` |
-| DELETE | `/departments/{id}` |
-
----
-
-## ▶️ Run Project
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Run the server
-
-```bash
-python run.py
-```
-
-Server URL
-
-```
-http://localhost:8080
-```
-
----
-
-## 📖 Features
-
-- Layered Architecture
-- REST API
-- CRUD Operations
-- MySQL Database Integration
-- JSON Responses
-- Input Validation
-- Error Handling
-
----
-
-## 🔄 Upcoming Features
-
-- Employee Management
-- Attendance Management
-- Leave Management
-- Payroll Management
-- Authentication
-- JWT Security
-- Role-Based Access Control (RBAC)
-
----
+    %% Database Tier
+    subgraph Storage Tier [Relational Database]
+        J -->|SQL Queries / Connection Pool| K[(MySQL Database)]
+    end
