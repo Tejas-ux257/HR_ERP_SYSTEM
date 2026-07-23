@@ -19,37 +19,38 @@ export default function EmployeeSidebar() {
   };
 
   const menuItems = [
-    {
-      path: "/employee/dashboard",
-      name: "Dashboard",
-      icon: <FaThLarge />,
-    },
-    {
-      path: "/employee/profile",
-      name: "My Profile",
-      icon: <FaUser />,
-    },
-    {
-      path: "/employee/attendance",
-      name: "My Attendance",
-      icon: <FaCalendarCheck />,
-    },
-    {
-      path: "/employee/apply-leave",
-      name: "Apply Leave",
-      icon: <FaCalendarPlus />,
-    },
-    {
-      path: "/employee/my-leaves",
-      name: "My Leaves",
-      icon: <FaListAlt />,
-    },
-    {
-      path: "/employee/my-payroll",
-      name: "My Payroll",
-      icon: <FaMoneyCheckAlt />,
-    },
-  ];
+  {
+    path: "/employee/dashboard",
+    name: "Dashboard",
+    icon: <FaThLarge />,
+  },
+  {
+    path: "/employee/profile",
+    name: "My Profile",
+    icon: <FaUser />,
+  },
+  {
+    path: "/employee/attendance",
+    name: "My Attendance",
+    icon: <FaCalendarCheck />,
+  },
+  {
+    path: "/employee/apply-leave",
+    name: "Apply Leave",
+    icon: <FaCalendarPlus />,
+  },
+  {
+    path: "/employee/my-leaves",
+    name: "My Leaves",
+    icon: <FaListAlt />,
+  },
+  {
+    path: "/employee/payroll",
+    name: "My Payroll",
+    icon: <FaMoneyCheckAlt />,
+  },
+];
+
 
   return (
     <div

@@ -1,4 +1,5 @@
 from flask import request
+from flask import g
 
 from app.middleware.auth_middleware import jwt_required
 from app.middleware.role_middleware import roles_required
@@ -18,6 +19,30 @@ from app.utils.response import (
     success_response,
     error_response
 )
+
+# ==========================================================
+# Employee - My Payroll
+# ==========================================================
+@jwt_required
+@roles_required("Employee")
+def my_payroll_controller():
+    """
+    Logged-in Employee Payroll
+    """
+
+    try:
+
+        employee_id = g.current_user["employee_id"]
+
+        payroll = get_employee_payroll(employee_id)
+
+        return success_response(
+            payroll,
+            "Payroll fetched successfully"
+        )
+
+    except Exception as e:
+        return error_response(str(e), 400)
 
 @jwt_required
 @roles_required("Admin", "HR")

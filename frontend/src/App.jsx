@@ -20,6 +20,9 @@ import EmployeeAttendance from "./employee/pages/EmployeeAttendance";
 import EmployeeApplyLeave from "./employee/pages/EmployeeApplyLeave";
 import EmployeeMyLeave from "./employee/pages/EmployeeMyLeave";
 
+import EmployeePayroll from "./employee/pages/EmployeePayroll";
+
+
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -152,7 +155,15 @@ function App() {
               <EmployeeMyLeave />
             </ProtectedRoute>
           }
-        />
+        />    
+        <Route
+           path="/employee/payroll"
+           element={
+           <ProtectedRoute>
+            <EmployeePayroll />
+            </ProtectedRoute>
+          }
+        />      
       </Routes>
 
       <ToastContainer

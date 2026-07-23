@@ -1,15 +1,34 @@
 import { useEffect, useState } from "react";
 import EmployeeLayout from "../Layouts/EmployeeLayout";
+import { getProfile } from "../Services/profileService";
 import { FaClock, FaCalendarCheck, FaClipboardList, FaFileInvoiceDollar, FaUserCheck } from "react-icons/fa";
 
 export default function EmployeeDashboard() {
   const [user, setUser] = useState({});
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const loadUserData = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-    setUser(storedUser);
-  };
+ const loadUserData = async () => {
+  try {
+    const response = await getProfile();
+
+    const profile = response?.data ?? response;
+
+    if (!profile) return;
+
+    setUser(profile);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(profile)
+    );
+
+    // Notify navbar/profile listeners
+    window.dispatchEvent(new Event("userProfileUpdated"));
+
+  } catch (error) {
+    console.error("Failed to load profile:", error);
+  }
+};
 
   useEffect(() => {
     loadUserData();

@@ -30,28 +30,32 @@ export default function EmployeeNavbar() {
   const role = user.role || "Employee";
 
   return (
-    <nav className="navbar navbar-expand bg-white border-bottom px-4 py-3 shadow-sm">
-      <div className="container-fluid p-0 d-flex justify-content-between align-items-center">
-        <span className="fs-5 fw-bold text-dark">
-          HR ERP System
-        </span>
+    <nav className="navbar navbar-expand-lg bg-white border-bottom shadow-sm px-4 py-3">
+      <div className="container-fluid">
 
-        <div className="d-flex align-items-center gap-3">
-          <span className="text-muted small">
+        <h4 className="fw-bold mb-0 text-primary">
+          HR ERP System
+        </h4>
+
+        <div className="ms-auto d-flex align-items-center gap-3">
+
+          <span className="text-muted">
             Welcome, <strong>{userName}</strong>
           </span>
 
-          <span className="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3 py-1 fw-semibold">
+          <span className="badge bg-primary">
             {role}
           </span>
 
           <button
+            className="btn btn-danger btn-sm"
             onClick={handleLogout}
-            className="btn btn-danger btn-sm rounded-3 px-3 py-1 fw-medium"
           >
             Logout
           </button>
+
         </div>
+
       </div>
     </nav>
   );

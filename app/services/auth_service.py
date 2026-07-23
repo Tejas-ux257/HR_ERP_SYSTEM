@@ -1,9 +1,9 @@
-
 import mysql.connector
 from app.database import get_db_connection
 from app.models.user import User
 from app.utils.password import hash_password, verify_password
 from app.utils.jwt_helper import generate_token
+from app.services.profile_service import ProfileService
 
 
 def register_user(employee_id, username, password, role):
@@ -16,53 +16,38 @@ def register_user(employee_id, username, password, role):
 
     try:
 
-        # Check Employee Exists
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT id
             FROM employees
             WHERE id=%s
-            """,
-            (employee_id,)
-        )
+        """, (employee_id,))
 
         employee = cursor.fetchone()
 
         if employee is None:
             raise Exception("Employee does not exist")
 
-        # Check Employee Already Registered
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT id
             FROM users
             WHERE employee_id=%s
-            """,
-            (employee_id,)
-        )
+        """, (employee_id,))
 
         if cursor.fetchone():
             raise Exception("Employee already has an account")
 
-        # Check Username Exists
-        cursor.execute(
-            """
+        cursor.execute("""
             SELECT id
             FROM users
             WHERE username=%s
-            """,
-            (username,)
-        )
+        """, (username,))
 
         if cursor.fetchone():
             raise Exception("Username already exists")
 
-        # Hash Password
         hashed_password = hash_password(password)
 
-        # Insert User
-        cursor.execute(
-            """
+        cursor.execute("""
             INSERT INTO users
             (
                 employee_id,
@@ -71,21 +56,17 @@ def register_user(employee_id, username, password, role):
                 role
             )
             VALUES (%s,%s,%s,%s)
-            """,
-            (
-                employee_id,
-                username,
-                hashed_password,
-                role
-            )
-        )
+        """, (
+            employee_id,
+            username,
+            hashed_password,
+            role
+        ))
 
         conn.commit()
 
-        user_id = cursor.lastrowid
-
         return {
-            "id": user_id,
+            "id": cursor.lastrowid,
             "employee_id": employee_id,
             "username": username,
             "role": role
@@ -107,40 +88,46 @@ def login_user(username, password):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE username=%s
-        """,
-        (username,)
-    )
+    try:
 
-    row = cursor.fetchone()
+        cursor.execute("""
+            SELECT *
+            FROM users
+            WHERE username=%s
+        """, (username,))
 
-    cursor.close()
-    conn.close()
+        row = cursor.fetchone()
 
-    if row is None:
-        raise Exception("Invalid username or password")
+        if row is None:
+            raise Exception("Invalid username or password")
 
-    user = User.from_db_row(row)
+        user = User.from_db_row(row)
 
-    if not verify_password(password, user.password):
-        raise Exception("Invalid username or password")
+        if not verify_password(password, user.password):
+            raise Exception("Invalid username or password")
 
-    token = generate_token(
-        {
+        token = generate_token({
             "id": user.id,
             "employee_id": user.employee_id,
             "username": user.username,
             "role": user.role
+        })
+
+        # Fetch complete employee profile
+        profile = ProfileService.get_profile(user.employee_id)
+
+        if profile is None:
+            raise Exception("Employee profile not found")
+
+        # Merge login-specific information
+        profile["username"] = user.username
+        profile["role"] = user.role
+
+        return {
+            "user": profile,
+            "token": token
         }
-    )
 
-    return {
-        "user": user.to_dict(),
-        "token": token
-    }
-
-
+    finally:
+        cursor.close()
+        conn.close()

@@ -4,7 +4,9 @@ from app.controllers.payroll_controller import (
     generate_payroll_controller,
     get_all_payroll_controller,
     get_employee_payroll_controller,
-    update_payroll_controller
+    update_payroll_controller,
+    my_payroll_controller
+    
 )
 
 payroll_bp = Blueprint(
@@ -31,3 +33,9 @@ payroll_bp.route(
     "/payroll/<int:payroll_id>",
     methods=["PUT"]
 )(update_payroll_controller)
+
+
+payroll_bp.route(
+    "/employee/payroll",
+    methods=["GET"]
+)(my_payroll_controller)
