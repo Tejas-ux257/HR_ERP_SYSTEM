@@ -5,48 +5,37 @@ import LoadingSpinner from "../../components/Common/LoadingSpinner";
 function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Reusable fetcher for manual button clicks or sync actions
+  // Fetcher supporting silent background live updates and manual sync
   const fetchDashboard = useCallback(async (isManualRefresh = false) => {
     if (isManualRefresh) {
-      setLoading(true);
+      setIsRefreshing(true);
     }
     try {
-      console.log("2. Calling API");
       const response = await getDashboardSummary();
-      console.log("3. API Response:", response);
       setDashboard(response.data);
+      setLastUpdated(new Date().toLocaleTimeString());
     } catch (error) {
-      console.log("4. Error:", error);
+      console.error("Error fetching dashboard summary:", error);
     } finally {
-      console.log("5. Finally");
       setLoading(false);
+      setIsRefreshing(false);
     }
   }, []);
 
+  // Initial load and live polling every 10 seconds
   useEffect(() => {
-    let isMounted = true;
+    fetchDashboard();
 
-    // Direct promise resolution prevents synchronous setState calls inside effect
-    getDashboardSummary()
-      .then((response) => {
-        if (isMounted) {
-          console.log("3. API Response:", response);
-          setDashboard(response.data);
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        if (isMounted) {
-          console.log("4. Error:", error);
-          setLoading(false);
-        }
-      });
+    // Auto-refresh interval for live data updates
+    const pollInterval = setInterval(() => {
+      fetchDashboard(false);
+    }, 10000); // 10 seconds
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    return () => clearInterval(pollInterval);
+  }, [fetchDashboard]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -59,27 +48,39 @@ function Dashboard() {
 
   return (
     <div className="container-fluid py-4 px-3 px-md-4 bg-light min-vh-100">
-      {/* Top Banner & Control Header */}
+      {/* Top Banner & Live Control Header */}
       <div className="card border-0 shadow-sm rounded-4 mb-4 bg-white">
         <div className="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <div>
             <div className="d-flex align-items-center gap-2 mb-1">
               <h3 className="fw-bold text-dark mb-0">Admin Control Center</h3>
-              <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1 small">
-                ● Live System
+              <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small d-inline-flex align-items-center gap-1">
+                <span
+                  className="spinner-grow spinner-grow-sm text-success"
+                  style={{ width: "0.5rem", height: "0.5rem" }}
+                  role="status"
+                ></span>
+                Live Updates Active
               </span>
             </div>
             <p className="text-muted small mb-0">
               Real-time snapshot of workforce metrics, leave requests, and payroll execution.
             </p>
           </div>
-          <div className="d-flex gap-2">
+
+          <div className="d-flex align-items-center gap-3">
+            {lastUpdated && (
+              <span className="text-muted small">
+                Updated: <strong>{lastUpdated}</strong>
+              </span>
+            )}
             <button
-              className="btn btn-light border btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-2xs fw-medium"
+              className="btn btn-primary border-0 btn-sm d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm fw-medium"
               onClick={() => fetchDashboard(true)}
+              disabled={isRefreshing}
             >
-              <i className="bi bi-arrow-clockwise"></i>
-              <span>Sync Data</span>
+              <i className={`bi bi-arrow-clockwise ${isRefreshing ? "spin-icon" : ""}`}></i>
+              <span>{isRefreshing ? "Syncing..." : "Sync Data"}</span>
             </button>
           </div>
         </div>
@@ -147,11 +148,19 @@ function Dashboard() {
               <p className="text-muted small fw-semibold text-uppercase tracking-wider mb-1">
                 Today's Attendance
               </p>
-              <div className="d-flex align-items-baseline gap-2">
+              <div className="d-flex align-items-baseline gap-2 mb-2">
                 <h2 className="fw-bold text-dark mb-0">
-                  {(dashboard?.today_attendance || 0).toLocaleString()}
+                  {todayAttendance.toLocaleString()}
                 </h2>
                 <span className="text-muted small">/ {totalEmployees}</span>
+              </div>
+              {/* Visual Progress Bar */}
+              <div className="progress" style={{ height: "6px" }}>
+                <div
+                  className="progress-bar bg-success"
+                  role="progressbar"
+                  style={{ width: `${attendanceRate}%` }}
+                ></div>
               </div>
             </div>
           </div>

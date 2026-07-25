@@ -28,4 +28,20 @@ export const loginUser = async (username, password) => {
         );
 
     }
+
+    
+};
+
+export const registerUser = async (data) => {
+  try {
+    const response = await api.post("/register", data);
+
+    return response.data.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Registration failed",
+      }
+    );
+  }
 };

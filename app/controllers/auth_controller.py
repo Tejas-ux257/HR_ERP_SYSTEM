@@ -31,10 +31,9 @@ def register_controller():
             return error_response(error, 400)
 
         user = register_user(
-            employee_id=data["employee_id"],
-            username=data["username"],
-            password=data["password"],
-            role=data["role"]
+         employee_id=data["employee_id"],
+         username=data["username"],
+        password=data["password"]
         )
 
         return success_response(

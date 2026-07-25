@@ -1,4 +1,5 @@
 import mysql.connector
+
 from app.database import get_db_connection
 from app.models.user import User
 from app.utils.password import hash_password, verify_password
@@ -6,9 +7,9 @@ from app.utils.jwt_helper import generate_token
 from app.services.profile_service import ProfileService
 
 
-def register_user(employee_id, username, password, role):
+def register_user(employee_id, username, password):
     """
-    Register New User
+    Register New Employee User
     """
 
     conn = get_db_connection()
@@ -16,6 +17,7 @@ def register_user(employee_id, username, password, role):
 
     try:
 
+        # Check employee exists
         cursor.execute("""
             SELECT id
             FROM employees
@@ -27,6 +29,7 @@ def register_user(employee_id, username, password, role):
         if employee is None:
             raise Exception("Employee does not exist")
 
+        # Check employee already registered
         cursor.execute("""
             SELECT id
             FROM users
@@ -36,6 +39,7 @@ def register_user(employee_id, username, password, role):
         if cursor.fetchone():
             raise Exception("Employee already has an account")
 
+        # Check username already exists
         cursor.execute("""
             SELECT id
             FROM users
@@ -45,8 +49,10 @@ def register_user(employee_id, username, password, role):
         if cursor.fetchone():
             raise Exception("Username already exists")
 
+        # Hash password
         hashed_password = hash_password(password)
 
+        # Always register as Employee
         cursor.execute("""
             INSERT INTO users
             (
@@ -55,12 +61,18 @@ def register_user(employee_id, username, password, role):
                 password,
                 role
             )
-            VALUES (%s,%s,%s,%s)
+            VALUES
+            (
+                %s,
+                %s,
+                %s,
+                %s
+            )
         """, (
             employee_id,
             username,
             hashed_password,
-            role
+            "Employee"
         ))
 
         conn.commit()
@@ -69,11 +81,16 @@ def register_user(employee_id, username, password, role):
             "id": cursor.lastrowid,
             "employee_id": employee_id,
             "username": username,
-            "role": role
+            "role": "Employee"
         }
 
     except mysql.connector.IntegrityError:
+        conn.rollback()
         raise Exception("Unable to register user")
+
+    except Exception:
+        conn.rollback()
+        raise
 
     finally:
         cursor.close()
@@ -113,13 +130,11 @@ def login_user(username, password):
             "role": user.role
         })
 
-        # Fetch complete employee profile
         profile = ProfileService.get_profile(user.employee_id)
 
         if profile is None:
             raise Exception("Employee profile not found")
 
-        # Merge login-specific information
         profile["username"] = user.username
         profile["role"] = user.role
 

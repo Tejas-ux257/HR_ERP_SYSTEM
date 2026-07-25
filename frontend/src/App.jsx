@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Login from "./pages/Login/Login";
+import Register from "./pages/Login/Register";
+
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Department from "./pages/Department/Department";
 import Employee from "./pages/Employee/Employee";
@@ -32,6 +34,11 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+
+        <Route
+         path="/register"
+         element={<Register />}
+    />
 
         {/* Admin Routes */}
         <Route

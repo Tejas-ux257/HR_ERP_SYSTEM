@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
 
+from app.config import Config
+
 from app.routes.department_routes import department_bp
 from app.routes.employee_routes import employee_bp
 from app.routes.auth_routes import auth_bp
@@ -16,11 +18,14 @@ from app.utils.error_handler import register_error_handlers
 def create_app():
     app = Flask(__name__)
 
+    # Load Configuration
+    app.config.from_object(Config)
+
     # Enable CORS
     CORS(
         app,
         resources={r"/*": {"origins": "*"}},
-        supports_credentials=True,
+        supports_credentials=False
     )
 
     # Register Blueprints

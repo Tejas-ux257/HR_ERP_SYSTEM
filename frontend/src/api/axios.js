@@ -1,14 +1,14 @@
 import axios from "axios";
 
-// Create Axios instance pointing to your backend
+// Automatically use the same host as the frontend
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: `http://${window.location.hostname}:8080`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Request Interceptor: Attach JWT Token if present
+// Attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -22,7 +22,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Handle 401 Unauthorized Errors
+// Handle unauthorized responses
 api.interceptors.response.use(
   (response) => response,
 
@@ -31,7 +31,6 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
 
-      // Redirect to login only if not already on the login/landing route
       if (window.location.pathname !== "/") {
         window.location.href = "/";
       }
