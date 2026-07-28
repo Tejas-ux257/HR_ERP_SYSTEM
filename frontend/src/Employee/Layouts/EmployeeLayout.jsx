@@ -1,5 +1,5 @@
-import EmployeeSidebar from "../components/EmployeeSidebar";
-import EmployeeNavbar from "../components/EmployeeNavbar";
+import EmployeeSidebar from "../Components/EmployeeSidebar";
+import EmployeeNavbar from "../Components/EmployeeNavbar";
 
 export default function EmployeeLayout({ children }) {
   return (
