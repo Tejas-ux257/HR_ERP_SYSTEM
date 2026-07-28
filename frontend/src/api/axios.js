@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Automatically use the same host as the frontend
 const api = axios.create({
-  baseURL: `http://${window.location.hostname}:8080`,
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

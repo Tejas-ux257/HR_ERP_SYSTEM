@@ -44,10 +44,7 @@ class Config:
         MAIL_USERNAME
     )
 
-    FRONTEND_RESET_URL = os.getenv(
-        "FRONTEND_RESET_URL",
-        "http://localhost:3000/reset-password"
-    )
+    FRONTEND_RESET_URL = os.getenv("FRONTEND_RESET_URL")
 
     RESET_TOKEN_EXPIRE_MINUTES = int(
         os.getenv("RESET_TOKEN_EXPIRE_MINUTES", 30)
