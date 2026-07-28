@@ -16,14 +16,12 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Employee Portal Pages
-import EmployeeDashboard from "./employee/pages/EmployeeDashboard";
-import MyProfile from "./employee/pages/MyProfile";
-import EmployeeAttendance from "./employee/pages/EmployeeAttendance";
-import EmployeeApplyLeave from "./employee/pages/EmployeeApplyLeave";
-import EmployeeMyLeave from "./employee/pages/EmployeeMyLeave";
-
-import EmployeePayroll from "./employee/pages/EmployeePayroll";
-
+import EmployeeDashboard from "./Employee/pages/EmployeeDashboard";
+import MyProfile from "./Employee/pages/MyProfile";
+import EmployeeAttendance from "./Employee/pages/EmployeeAttendance";
+import EmployeeApplyLeave from "./Employee/pages/EmployeeApplyLeave";
+import EmployeeMyLeave from "./Employee/pages/EmployeeMyLeave";
+import EmployeePayroll from "./Employee/pages/EmployeePayroll";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -34,11 +32,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-
-        <Route
-         path="/register"
-         element={<Register />}
-    />
+        <Route path="/register" element={<Register />} />
 
         {/* Admin Routes */}
         <Route
@@ -162,15 +156,16 @@ function App() {
               <EmployeeMyLeave />
             </ProtectedRoute>
           }
-        />    
+        />
+
         <Route
-           path="/employee/payroll"
-           element={
-           <ProtectedRoute>
-            <EmployeePayroll />
+          path="/employee/payroll"
+          element={
+            <ProtectedRoute>
+              <EmployeePayroll />
             </ProtectedRoute>
           }
-        />      
+        />
       </Routes>
 
       <ToastContainer
